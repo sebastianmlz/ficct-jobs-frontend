@@ -1,0 +1,98 @@
+<app-page-header
+  [eyebrow]="vacancy()?.company_name ?? ''"
+  [title]="vacancy()?.title ?? 'Postulantes'"
+  description="Revise los candidatos que se postularon y consulte los resultados del análisis de compatibilidad."
+>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <a class="btn-ghost btn-sm" routerLink="/rep/vacancies">← Volver a vacantes</a>
+    <button class="btn-secondary btn-sm" type="button" (click)="loadRanking()" [disabled]="rankingBusy()">
+      {{ rankingBusy() ? 'Cargando…' : 'Ejecutar análisis' }}
+    </button>
+    <a class="btn-secondary btn-sm" [href]="csvUrl()" download>
+      Exportar CSV
+    </a>
+  </div>
+</app-page-header>
+
+<div class="grid gap-6 lg:grid-cols-3">
+  <section class="lg:col-span-2">
+    <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
+      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+        <h2 class="heading-h2 text-sm">Postulaciones</h2>
+      </div>
+      <div class="p-5">
+        @if (loading()) {
+          <div class="space-y-3">
+            @for (i of [1,2,3]; track i) {
+              <div class="h-16 animate-pulse rounded-lg border border-institution-border bg-institution-surface"></div>
+            }
+          </div>
+        } @else if (applicants().length === 0) {
+          <app-empty-state
+            title="Aún no hay postulantes"
+            description="Cuando los candidatos se postulen aparecerán aquí."
+          ></app-empty-state>
+        } @else {
+          <div class="table-container">
+            <table class="table-base">
+              <thead>
+                <tr>
+                  <th>Postulante</th>
+                  <th>Etapa</th>
+                  <th class="hidden md:table-cell">Postulado</th>
+                  <th class="text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (a of applicants(); track a.id) {
+                  <tr>
+                    <td class="font-mono text-xs text-institution-text-secondary">{{ a.id.slice(0, 8) }}…</td>
+                    <td><app-stage-badge [value]="a.current_stage"></app-stage-badge></td>
+                    <td class="hidden text-xs text-institution-text-secondary md:table-cell">{{ a.applied_at | date:'dd MMM yyyy' }}</td>
+                    <td class="text-right">
+                      <a class="btn-secondary btn-sm" [routerLink]="['/rep/applications', a.id]">
+                        Abrir
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <aside class="space-y-4">
+    <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
+      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+        <h2 class="heading-h2 text-sm">Mejores coincidencias</h2>
+        <p class="mt-0.5 text-xs text-institution-text-secondary">Analiza la compatibilidad de todos los candidatos con la vacante.</p>
+      </div>
+      <div class="p-5">
+        @if (ranking().length === 0) {
+          <p class="text-sm text-institution-text-secondary">Ejecute el análisis para ver los candidatos ordenados por compatibilidad.</p>
+        } @else {
+          <ol class="space-y-3">
+            @for (r of ranking(); track r.profile_id; let i = $index) {
+              <li class="flex items-start gap-3 rounded-lg border border-institution-border p-3">
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ficct-100 text-xs font-bold text-ficct-700">{{ i + 1 }}</span>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-medium text-institution-text-primary">{{ r.candidate_name || r.candidate_email }}</p>
+                  <p class="truncate text-xs text-institution-text-secondary">{{ r.candidate_email }}</p>
+                  @if (r.snippet) {
+                    <p class="mt-1 line-clamp-2 text-xs text-institution-text-secondary">{{ r.snippet }}</p>
+                  }
+                </div>
+                @if (r.score !== null && r.score !== undefined) {
+                  <span class="shrink-0 badge-info">{{ (r.score * 100) | number:'1.0-0' }}%</span>
+                }
+              </li>
+            }
+          </ol>
+        }
+      </div>
+    </div>
+  </aside>
+</div>

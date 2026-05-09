@@ -1,0 +1,84 @@
+<app-page-header
+  eyebrow="Configuración"
+  title="Parámetros del sistema"
+  description="Ajuste los parámetros del sistema con precaución. Los cambios surten efecto de inmediato."
+></app-page-header>
+
+<section class="grid gap-6 lg:grid-cols-5">
+  <form class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-2" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <h2 class="heading-h2 text-sm">Crear o actualizar</h2>
+    </div>
+    <div class="p-5 space-y-3">
+      <div>
+        <label class="label-base" for="p-key">Clave</label>
+        <input id="p-key" class="input-base font-mono text-sm" formControlName="key" placeholder="vacancy_approval_required" />
+      </div>
+      <div>
+        <label class="label-base" for="p-type">Tipo</label>
+        <select id="p-type" class="input-base" formControlName="value_type">
+          <option value="string">string</option>
+          <option value="bool">bool</option>
+          <option value="int">int</option>
+          <option value="float">float</option>
+          <option value="json">json</option>
+        </select>
+      </div>
+      <div>
+        <label class="label-base" for="p-value">Valor</label>
+        <input id="p-value" class="input-base font-mono text-sm" formControlName="value" />
+      </div>
+      <div>
+        <label class="label-base" for="p-desc">Descripción</label>
+        <input id="p-desc" class="input-base" formControlName="description" />
+      </div>
+      <button class="btn-primary w-full" type="submit" [disabled]="form.invalid || busy()">
+        {{ busy() ? 'Cargando…' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+
+  <div class="lg:col-span-3">
+    <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
+      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+        <h2 class="heading-h2 text-sm">Parámetros actuales</h2>
+      </div>
+      <div class="p-5">
+        @if (items().length === 0) {
+          <p class="text-sm text-institution-text-secondary">Aún no hay parámetros configurados.</p>
+        } @else {
+          <div class="table-container">
+            <table class="table-base">
+              <thead>
+                <tr>
+                  <th>Clave</th>
+                  <th>Tipo</th>
+                  <th class="text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of items(); track p.id) {
+                  <tr>
+                    <td>
+                      <p class="font-mono text-sm text-institution-text-primary">{{ p.key }}</p>
+                      <p class="mt-0.5 font-mono text-xs text-institution-text-secondary break-all">{{ p.value }}</p>
+                      @if (p.description) {
+                        <p class="mt-0.5 text-xs text-institution-text-secondary">{{ p.description }}</p>
+                      }
+                    </td>
+                    <td><span class="badge-neutral font-mono">{{ p.value_type }}</span></td>
+                    <td class="text-right">
+                      <button class="btn-secondary btn-sm" type="button" (click)="loadIntoForm(p)">
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

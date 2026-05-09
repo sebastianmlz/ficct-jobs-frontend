@@ -1,0 +1,103 @@
+<app-page-header
+  eyebrow="Marketplace"
+  title="Vacantes abiertas"
+  description="Explore las vacantes activas de las empresas aliadas a la FICCT."
+></app-page-header>
+
+<div class="mb-6 rounded-xl border border-institution-border bg-white p-4 shadow-card sm:p-5">
+  <label class="label-base" for="vacancy-query">Describa lo que busca</label>
+  <div class="mt-1.5 flex gap-2">
+    <div class="relative flex-1">
+      <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <svg class="h-4 w-4 text-institution-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <input
+        id="vacancy-query"
+        class="input-base pl-9"
+        [formControl]="query"
+        placeholder="React + TypeScript, diseñador UX, analista de datos…"
+      />
+    </div>
+    <button class="btn-primary shrink-0" type="button" (click)="runSearch()" [disabled]="searching()">
+      @if (searching()) {
+        <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+      }
+      {{ searching() ? 'Cargando…' : 'Buscar' }}
+    </button>
+    @if (semanticActive()) {
+      <button class="btn-secondary shrink-0" type="button" (click)="reset()">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        Limpiar
+      </button>
+    }
+  </div>
+  @if (semanticActive()) {
+    <div class="mt-3 flex items-center gap-2 text-xs text-institution-text-secondary">
+      <span class="badge-info">Búsqueda inteligente</span>
+      Resultados ordenados por relevancia según su búsqueda.
+    </div>
+  }
+</div>
+
+@if (loading()) {
+  <div class="grid gap-4 lg:grid-cols-2">
+    @for (i of [1,2,3,4]; track i) {
+      <div class="h-40 animate-pulse rounded-xl bg-white border border-institution-border shadow-card"></div>
+    }
+  </div>
+} @else if (visibleHits().length === 0 && visibleVacancies().length === 0) {
+  <app-empty-state
+    title="Por ahora no hay vacantes"
+    description="No hay vacantes activas en este momento."
+  ></app-empty-state>
+} @else {
+  <div class="grid gap-4 lg:grid-cols-2">
+    @for (item of cards(); track item.id) {
+      <article class="group flex flex-col rounded-xl border border-institution-border bg-white p-5 shadow-card transition-all duration-200 hover:shadow-card-hover hover:border-ficct-200 hover:-translate-y-0.5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <h3 class="font-display text-base font-semibold text-institution-text-primary line-clamp-1">{{ item.title }}</h3>
+            <p class="mt-0.5 text-xs font-medium uppercase tracking-wider text-institution-text-secondary">{{ item.companyName }}</p>
+          </div>
+          @if (item.score !== null && item.score !== undefined) {
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ficct-50 text-center">
+              <span class="text-xs font-bold text-ficct-700">{{ scoreLabel(item.score) }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="mt-3 flex items-center gap-2 text-xs text-institution-text-secondary">
+          <svg class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span>{{ item.modality }}</span>
+          @if (item.location) {
+            <span class="text-institution-border">·</span>
+            <span>{{ item.location }}</span>
+          }
+        </div>
+
+        @if (item.snippet) {
+          <p class="mt-3 text-sm leading-relaxed text-institution-text-secondary line-clamp-3">{{ item.snippet }}</p>
+        }
+
+        <div class="mt-auto pt-4">
+          <a class="btn-primary btn-sm" [routerLink]="['/vacancies', item.id]">
+            Ver
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    }
+  </div>
+}

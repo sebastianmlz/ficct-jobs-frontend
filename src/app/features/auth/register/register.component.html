@@ -1,0 +1,114 @@
+<div class="flex min-h-screen bg-institution-surface">
+
+  <div class="hidden lg:flex lg:w-[420px] lg:shrink-0 lg:flex-col lg:justify-between bg-institution-navy px-10 py-10">
+    <div>
+      <a class="flex items-center gap-2.5" routerLink="/">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-ficct-500 font-display text-sm font-bold text-white">FJ</span>
+        <div class="flex flex-col leading-none">
+          <span class="font-display text-base font-bold tracking-tight text-white">FICCT Jobs</span>
+          <span class="text-[10px] font-semibold uppercase tracking-widest text-ficct-300">UAGRM</span>
+        </div>
+      </a>
+    </div>
+    <div class="space-y-4">
+      <h2 class="font-display text-xl font-bold text-white">Canal de empleabilidad institucional</h2>
+      <p class="text-sm leading-relaxed text-white/60">
+        Plataforma exclusiva para estudiantes y egresados de la FICCT-UAGRM. Conectamos talento verificado con empresas que valoran la formación de nuestra facultad.
+      </p>
+      <div class="rounded-lg border border-white/10 bg-white/5 p-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-ficct-300">Acceso para empresas</p>
+        <p class="mt-1 text-sm text-white/50">Las cuentas de empresa son creadas por el administrador FICCT. Contacte al área de vinculación laboral.</p>
+      </div>
+    </div>
+    <p class="text-xs text-white/30">FICCT-UAGRM · Plataforma institucional</p>
+  </div>
+
+  <div class="flex flex-1 items-center justify-center px-4 py-12">
+    <div class="w-full max-w-[440px]">
+
+      <div class="mb-8 flex items-center gap-2 lg:hidden">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-ficct-500 font-display text-xs font-bold text-white">FJ</span>
+        <span class="font-display text-sm font-bold text-institution-navy">FICCT Jobs</span>
+      </div>
+
+      <div>
+        <p class="heading-eyebrow">FICCT Jobs</p>
+        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-institution-navy">
+          Crear cuenta de candidato
+        </h1>
+        <p class="mt-1 text-sm text-institution-text-secondary">Estudiantes y egresados de la FICCT-UAGRM. Las empresas son registradas por el administrador FICCT.</p>
+      </div>
+
+      <form class="mt-7 space-y-4" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div>
+          <label class="label-base" for="reg-name">Nombre completo</label>
+          <input
+            id="reg-name"
+            type="text"
+            autocomplete="name"
+            class="input-base"
+            formControlName="full_name"
+            placeholder="Nombre Apellido"
+          />
+        </div>
+        <div>
+          <label class="label-base" for="reg-email">Correo electrónico</label>
+          <input
+            id="reg-email"
+            type="email"
+            autocomplete="email"
+            class="input-base"
+            formControlName="email"
+            placeholder="tu@correo.edu.bo"
+          />
+        </div>
+        <div>
+          <label class="label-base" for="reg-password">Contraseña</label>
+          <input
+            id="reg-password"
+            type="password"
+            autocomplete="new-password"
+            class="input-base"
+            formControlName="password"
+          />
+          <p class="field-hint">Al menos 10 caracteres.</p>
+        </div>
+
+        <label class="flex cursor-pointer items-start gap-2.5 rounded-md border border-institution-border bg-white p-3 transition hover:border-ficct-300">
+          <input type="checkbox" formControlName="accepted_terms" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-ficct-500 focus:ring-ficct-500" />
+          <span class="text-sm text-institution-text-secondary">Acepto los términos de uso y la política de privacidad.</span>
+        </label>
+
+        @if (errorMessage()) {
+          <div class="alert-danger flex items-start gap-2">
+            <svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <button class="btn-primary w-full" type="submit" [disabled]="busy() || form.invalid">
+          @if (busy()) {
+            <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            Creando cuenta…
+          } @else {
+            Crear cuenta
+          }
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-institution-text-secondary">
+        ¿Ya tiene una cuenta?
+        <a class="ml-1 font-semibold text-ficct-600 hover:text-ficct-700" routerLink="/auth/login">
+          Iniciar sesión
+        </a>
+      </p>
+
+    </div>
+  </div>
+
+</div>

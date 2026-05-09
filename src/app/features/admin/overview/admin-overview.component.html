@@ -1,0 +1,157 @@
+<app-page-header
+  eyebrow="Operaciones"
+  title="Panorama institucional"
+  description="Métricas en tiempo real, estado del sistema y exportaciones del canal de empleabilidad."
+>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <a class="btn-secondary btn-sm" [href]="csvUrl()" download>
+      Exportar CSV
+    </a>
+  </div>
+</app-page-header>
+
+<section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+  @for (k of metrics; track k.key) {
+    <div class="rounded-xl border border-institution-border bg-white p-5 shadow-card">
+      <p class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary">{{ k.label }}</p>
+      <p class="mt-2 font-display text-3xl font-extrabold text-institution-navy">{{ value(k.key) }}</p>
+    </div>
+  }
+</section>
+
+<section class="mt-6 grid gap-5 lg:grid-cols-3">
+  <div class="rounded-xl border border-institution-border bg-white shadow-card lg:col-span-2 overflow-hidden">
+    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <h2 class="heading-h2 text-sm">Postulaciones por etapa</h2>
+    </div>
+    <div class="p-5">
+      @if (stages().length === 0) {
+        <p class="text-sm text-institution-text-secondary">Aún no hay postulaciones registradas.</p>
+      } @else {
+        <ul class="divide-y divide-institution-border/60 text-sm">
+          @for (s of stages(); track s.stage) {
+            <li class="flex items-center justify-between py-2.5">
+              <span class="text-institution-text-primary">{{ stageLabel(s.stage) }}</span>
+              <span class="font-display font-bold text-institution-navy">{{ s.count }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+  <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
+    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <h2 class="heading-h2 text-sm">Estado del sistema</h2>
+    </div>
+    <div class="p-5">
+    @if (health(); as h) {
+      <div class="flex items-center gap-2">
+        <span [class]="h.reachable ? 'status-dot-success' : 'status-dot-danger'" class="status-dot"></span>
+        <span class="text-sm font-medium" [class.text-emerald-700]="h.reachable" [class.text-red-700]="!h.reachable">
+          {{ h.reachable ? 'Operativo' : 'Sin respuesta' }}
+        </span>
+      </div>
+      @if (h.body) {
+        <ul class="mt-3 space-y-1 text-xs text-muted">
+          @for (entry of healthEntries(); track entry[0]) {
+            <li class="flex justify-between gap-2">
+              <span class="uppercase tracking-widest">{{ entry[0] }}</span>
+              <span class="font-medium text-institution-text-primary">{{ entry[1] }}</span>
+            </li>
+          }
+        </ul>
+      }
+      @if (h.error) {
+        <p class="mt-2 text-xs text-status-danger">{{ h.error }}</p>
+      }
+    } @else {
+      <p class="mt-1 text-sm text-muted">Cargando…</p>
+    }
+    <button class="mt-4 btn-secondary btn-sm" type="button" (click)="loadHealth()">
+      Reverificar
+    </button>
+    </div>
+  </div>
+</section>
+
+<section class="mt-5 grid gap-5 lg:grid-cols-3">
+  <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-2">
+    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <h2 class="heading-h2 text-sm">Uso de inteligencia artificial</h2>
+      <p class="text-xs text-institution-text-secondary">Detalle de uso del servicio de inteligencia artificial en los últimos 30 días.</p>
+    </div>
+    <div class="p-5">
+      @if (tokens(); as t) {
+        <div class="mb-4 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-lg border border-institution-border bg-institution-surface p-3">
+            <p class="text-xs uppercase tracking-wider text-institution-text-secondary">Ventana</p>
+            <p class="font-display text-xl font-bold text-institution-navy">{{ t.period_days }}d</p>
+          </div>
+          <div class="rounded-lg border border-institution-border bg-institution-surface p-3">
+            <p class="text-xs uppercase tracking-wider text-institution-text-secondary">Llamadas</p>
+            <p class="font-display text-xl font-bold text-institution-navy">{{ t.totals.calls ?? 0 }}</p>
+          </div>
+          <div class="rounded-lg border border-institution-border bg-institution-surface p-3">
+            <p class="text-xs uppercase tracking-wider text-institution-text-secondary">Total procesado</p>
+            <p class="font-display text-xl font-bold text-institution-navy">{{ t.totals.total_tokens ?? 0 }}</p>
+          </div>
+        </div>
+        <table class="table-base">
+          <thead>
+            <tr>
+              <th>Operación</th>
+              <th>Llamadas</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Total procesado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (op of tokenOperations(); track op.operation) {
+              <tr>
+                <td class="font-mono text-xs">{{ op.operation }}</td>
+                <td>{{ op.calls }}</td>
+                <td>{{ op.input_tokens }}</td>
+                <td>{{ op.output_tokens }}</td>
+                <td class="font-semibold">{{ op.total_tokens }}</td>
+              </tr>
+            }
+            @if (tokenOperations().length === 0) {
+              <tr><td colspan="5" class="py-3 text-xs text-institution-text-secondary">Sin registros de uso en esta ventana.</td></tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="text-sm text-institution-text-secondary">Cargando…</p>
+      }
+    </div>
+  </div>
+
+  <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
+    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <h2 class="heading-h2 text-sm">Mapa de demanda de habilidades</h2>
+      <p class="text-xs text-institution-text-secondary">Consulte qué habilidades son más demandadas en las vacantes activas.</p>
+    </div>
+    <div class="p-5">
+      <button class="btn-secondary btn-sm w-full" type="button" (click)="loadSkills()" [disabled]="skillsBusy()">
+        @if (skillsBusy()) {
+          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+        }
+        {{ skillsBusy() ? 'Cargando…' : 'Ejecutar análisis' }}
+      </button>
+      @if (skills(); as s) {
+        @if (!s.available) {
+          <div class="mt-4 alert-danger text-xs">{{ s.message ?? s.error ?? '' }}</div>
+        } @else if (s.skills && s.skills.length) {
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            @for (skill of s.skills; track skill) {
+              <span class="badge-info">{{ skill }}</span>
+            }
+          </div>
+        } @else if (s.message) {
+          <p class="mt-4 text-sm text-institution-text-secondary">{{ s.message }}</p>
+        }
+      }
+    </div>
+  </div>
+</section>

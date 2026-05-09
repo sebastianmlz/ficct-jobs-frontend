@@ -1,0 +1,65 @@
+<app-page-header
+  eyebrow="Workspace de empresa"
+  title="Mis vacantes"
+  description="Cree, publique y gestione las vacantes de su empresa."
+>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <a class="btn-primary" routerLink="/rep/vacancies/new">Nueva vacante</a>
+  </div>
+</app-page-header>
+
+@if (loading()) {
+  <p class="text-sm text-muted">Cargando…</p>
+} @else if (vacancies().length === 0) {
+  <app-empty-state
+    title="Aún no tiene vacantes"
+    description="Publique su primera vacante para comenzar a recibir candidatos."
+  >
+    <a class="btn-primary btn-sm" routerLink="/rep/vacancies/new">Nueva vacante</a>
+  </app-empty-state>
+} @else {
+  <div class="table-container">
+    <table class="table-base">
+      <thead>
+        <tr>
+          <th>Vacante</th>
+          <th>Estado</th>
+          <th class="hidden md:table-cell">Modalidad</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (v of vacancies(); track v.id) {
+          <tr>
+            <td>
+              <p class="font-semibold text-institution-text-primary">{{ v.title }}</p>
+              <p class="text-xs text-institution-text-secondary">{{ v.location || '—' }}</p>
+            </td>
+            <td><span [class]="badgeClass(v.status)">{{ statusLabel(v.status) }}</span></td>
+            <td class="hidden text-institution-text-secondary md:table-cell">{{ v.modality }}</td>
+            <td>
+              <div class="flex flex-wrap items-center justify-end gap-1.5">
+                <a class="btn-ghost btn-sm" [routerLink]="['/rep/vacancies', v.id, 'applicants']">
+                  Postulantes
+                </a>
+                <a class="btn-secondary btn-sm" [routerLink]="['/rep/vacancies', v.id, 'edit']">
+                  Editar
+                </a>
+                @if (v.status === 'draft') {
+                  <button class="btn-primary btn-sm" type="button" (click)="activate(v)">
+                    Publicar
+                  </button>
+                }
+                @if (v.status === 'active') {
+                  <button class="btn-danger btn-sm" type="button" (click)="close(v)">
+                    Cerrar
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

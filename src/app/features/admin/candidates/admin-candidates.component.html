@@ -1,0 +1,60 @@
+<app-page-header
+  eyebrow="Cola de validación"
+  title="Validación de candidatos"
+  description="Apruebe o rechace cuentas de candidatos. Los aprobados reciben el distintivo institucional."
+></app-page-header>
+
+@if (loading()) {
+  <p class="text-sm text-muted">Cargando…</p>
+} @else if (items().length === 0) {
+  <app-empty-state
+    title="Aún no hay candidatos"
+    description="Cuando los candidatos se registren aparecerán aquí."
+  ></app-empty-state>
+} @else {
+  <div class="table-container">
+    <table class="table-base">
+      <thead>
+        <tr>
+          <th>Candidato</th>
+          <th class="hidden md:table-cell">Carrera</th>
+          <th>Estado</th>
+          <th class="hidden md:table-cell">Registrado</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of items(); track c.profile_id) {
+          <tr>
+            <td>
+              <p class="font-semibold text-institution-text-primary">{{ c.full_name || '—' }}</p>
+              <p class="text-xs text-institution-text-secondary">{{ c.email }}</p>
+            </td>
+            <td class="hidden text-institution-text-secondary md:table-cell">
+              {{ c.career || '—' }}
+              @if (c.graduation_year) {
+                <span class="text-xs">· {{ c.graduation_year }}</span>
+              }
+            </td>
+            <td><span [class]="badgeClass(c.status)">{{ statusLabel(c.status) }}</span></td>
+            <td class="hidden text-xs text-institution-text-secondary md:table-cell">{{ c.created_at | date:'dd MMM yyyy' }}</td>
+            <td>
+              <div class="flex flex-wrap items-center justify-end gap-1.5">
+                @if (c.status !== 'approved') {
+                  <button class="btn-primary btn-sm" type="button" (click)="approve(c)" [disabled]="busyId() === c.profile_id">
+                    Aprobar
+                  </button>
+                }
+                @if (c.status !== 'rejected') {
+                  <button class="btn-ghost btn-sm" type="button" (click)="reject(c)" [disabled]="busyId() === c.profile_id">
+                    Rechazar
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

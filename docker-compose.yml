@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: ficct-jobs-frontend:prod
+    container_name: ficct-jobs-frontend
+    ports:
+      - "4200:80"
+    restart: unless-stopped

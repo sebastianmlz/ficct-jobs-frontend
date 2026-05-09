@@ -1,0 +1,23 @@
+node_modules/
+.angular/
+dist/
+.tsbuildinfo
+environments/
+# Env
+.env
+.env.*
+!.env.example
+
+# Test artifacts
+coverage/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

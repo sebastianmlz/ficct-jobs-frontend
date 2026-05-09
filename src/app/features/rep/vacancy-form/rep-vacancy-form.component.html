@@ -1,0 +1,74 @@
+<app-page-header
+  eyebrow="Vacante"
+  [title]="editing() ? 'Editar vacante' : 'Publicar vacante'"
+  description="Proporcione una descripción clara y los requisitos de la posición."
+></app-page-header>
+
+<form class="max-w-3xl rounded-xl border border-institution-border bg-white shadow-card overflow-hidden" [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+    <h2 class="heading-h2 text-sm">Título</h2>
+  </div>
+  <div class="p-5 space-y-4">
+    <div>
+      <label class="label-base" for="vt-title">Título</label>
+      <input id="vt-title" class="input-base" formControlName="title" />
+      @if (form.controls.title.invalid && form.controls.title.touched) {
+        <p class="field-error">El título debe tener al menos 4 caracteres.</p>
+      }
+    </div>
+
+    <div>
+      <label class="label-base" for="vt-description">Descripción</label>
+      <textarea id="vt-description" class="input-base h-32" formControlName="description"></textarea>
+      @if (form.controls.description.invalid && form.controls.description.touched) {
+        <p class="field-error">La descripción debe tener al menos 10 caracteres.</p>
+      }
+    </div>
+
+    <div>
+      <label class="label-base" for="vt-requirements">Requisitos</label>
+      <textarea id="vt-requirements" class="input-base h-24" formControlName="requirements" placeholder="Liste los requisitos imprescindibles."></textarea>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-3">
+      <div>
+        <label class="label-base" for="vt-modality">Modalidad</label>
+        <select id="vt-modality" class="input-base" formControlName="modality">
+          <option value="onsite">Presencial</option>
+          <option value="remote">Remoto</option>
+          <option value="hybrid">Híbrido</option>
+        </select>
+      </div>
+      <div>
+        <label class="label-base" for="vt-location">Ubicación</label>
+        <input id="vt-location" class="input-base" formControlName="location" />
+      </div>
+      <div>
+        <label class="label-base" for="vt-currency">Moneda</label>
+        <input id="vt-currency" class="input-base" formControlName="salary_currency" placeholder="USD" />
+      </div>
+      <div>
+        <label class="label-base" for="vt-min">Salario mín</label>
+        <input id="vt-min" type="number" class="input-base" formControlName="salary_min" />
+      </div>
+      <div>
+        <label class="label-base" for="vt-max">Salario máx</label>
+        <input id="vt-max" type="number" class="input-base" formControlName="salary_max" />
+      </div>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert-danger text-sm">{{ errorMessage() }}</div>
+    }
+
+    <div class="flex flex-wrap items-center gap-2 border-t border-institution-border pt-4">
+      <button class="btn-primary" type="submit" [disabled]="busy()">
+        @if (busy()) {
+          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+        }
+        {{ busy() ? 'Cargando…' : 'Guardar' }}
+      </button>
+      <a class="btn-ghost" routerLink="/rep/vacancies">Cancelar</a>
+    </div>
+  </div>
+</form>

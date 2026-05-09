@@ -1,0 +1,53 @@
+<app-page-header
+  eyebrow="Eventos"
+  title="Centro de notificaciones"
+  description="Eventos del ciclo de vida de su cuenta, vacantes y postulaciones."
+></app-page-header>
+
+@if (loading()) {
+  <div class="space-y-3">
+    @for (i of [1,2,3,4]; track i) {
+      <div class="h-20 animate-pulse rounded-xl bg-white border border-institution-border"></div>
+    }
+  </div>
+} @else if (items().length === 0) {
+  <app-empty-state
+    title="Sin novedades"
+    description="Las notificaciones aparecerán aquí cuando haya actividad."
+  ></app-empty-state>
+} @else {
+  <div class="space-y-2">
+    @for (n of items(); track n.id) {
+      <div
+        class="flex items-start gap-4 rounded-xl border bg-white p-4 shadow-card transition-all"
+        [class.border-institution-border]="n.read_at"
+        [class.border-ficct-200]="!n.read_at"
+        [class.opacity-60]="!!n.read_at"
+      >
+        <div [class]="'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ' + kindBg(n.kind)">
+          <app-icon [name]="kindIcon(n.kind)" size="h-4 w-4" [class]="kindIconColor(n.kind)"/>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-start justify-between gap-2">
+            <p class="font-semibold text-sm text-institution-text-primary">{{ n.title }}</p>
+            @if (!n.read_at) {
+              <span class="h-2 w-2 shrink-0 rounded-full bg-ficct-500 mt-1.5"></span>
+            }
+          </div>
+          @if (n.body) {
+            <p class="mt-0.5 text-sm text-institution-text-secondary">{{ n.body }}</p>
+          }
+          <div class="mt-2 flex items-center justify-between gap-2">
+            <span class="text-xs text-institution-text-secondary">{{ n.created_at | date:'dd MMM, HH:mm' }}</span>
+            @if (!n.read_at) {
+              <button class="btn-ghost btn-sm text-xs" type="button" (click)="markRead(n)">
+                Marcar leída
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
