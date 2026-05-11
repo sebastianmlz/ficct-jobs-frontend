@@ -4,7 +4,7 @@ import { inject } from '@angular/core';
 import { TokenStorageService } from '../services/token-storage.service';
 
 /**
- * Attaches the JWT access token (RNF04 / §3.3.4) to outgoing API calls.
+ * Attaches the JWT access token to outgoing API calls.
  * Skips Authorization header when the request already provides one or when
  * the URL is the login/refresh/recover endpoint.
  */

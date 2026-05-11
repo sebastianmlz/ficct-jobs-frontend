@@ -30,13 +30,9 @@
         <label class="label-base" for="c-rep-name">Nombre del representante</label>
         <input id="c-rep-name" class="input-base" formControlName="rep_full_name" />
       </div>
-      @if (lastOtp()) {
-        <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
-          <p class="text-xs font-semibold text-emerald-800">Contraseña temporal generada para el representante</p>
-          <p class="mt-1 break-all font-mono text-sm font-bold text-emerald-900">{{ lastOtp() }}</p>
-          <p class="mt-1 text-xs text-emerald-700">Compártala por un canal seguro. Se muestra una sola vez.</p>
-        </div>
-      }
+      <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+        El alta queda en estado <b>pendiente</b>. Use la sección "Por validar" para aprobar o rechazar; recién entonces el representante recibirá el enlace para fijar su contraseña.
+      </div>
       <button class="btn-primary w-full" type="submit" [disabled]="form.invalid || busy()">
         @if (busy()) {
           <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -46,7 +42,58 @@
     </div>
   </form>
 
-  <div class="lg:col-span-3">
+  <div class="lg:col-span-3 space-y-5">
+    <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
+      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+        <h2 class="heading-h2 text-sm">Por validar</h2>
+        <p class="text-xs text-institution-text-secondary">Empresas pendientes de aprobación.</p>
+      </div>
+      <div class="p-5">
+        @if (pendingLoading()) {
+          <div class="space-y-3">
+            @for (i of [1,2]; track i) {
+              <div class="h-14 animate-pulse rounded-lg border border-institution-border bg-institution-surface"></div>
+            }
+          </div>
+        } @else if (pending().length === 0) {
+          <p class="text-xs text-institution-text-secondary">No hay empresas pendientes de validación.</p>
+        } @else {
+          <div class="table-container">
+            <table class="table-base">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Registrada</th>
+                  <th class="text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (c of pending(); track c.id) {
+                  <tr>
+                    <td>
+                      <p class="font-semibold text-institution-text-primary">{{ c.legal_name }}</p>
+                      <p class="text-xs text-institution-text-secondary">{{ c.sector || '—' }} · {{ c.contact_email }}</p>
+                    </td>
+                    <td class="text-xs text-institution-text-secondary">{{ c.created_at | date:'dd MMM yyyy' }}</td>
+                    <td>
+                      <div class="flex justify-end gap-1.5">
+                        <button class="btn-primary btn-sm" type="button" (click)="approveCompany(c)" [disabled]="busyId() === c.id">
+                          Aprobar
+                        </button>
+                        <button class="btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700" type="button" (click)="rejectCompany(c)" [disabled]="busyId() === c.id">
+                          Rechazar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+
     <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
       <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
         <h2 class="heading-h2 text-sm">Empresas existentes</h2>

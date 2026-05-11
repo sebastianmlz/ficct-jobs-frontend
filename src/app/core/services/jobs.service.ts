@@ -58,6 +58,13 @@ export class JobsService {
     return this.api.post<ApplicationItem>(`/jobs/applications/${id}/transition/`, { stage });
   }
 
+  notifyApplication(
+    id: string,
+    payload: { kind?: 'info' | 'success' | 'warning'; title: string; body?: string },
+  ): Observable<ApplicationItem> {
+    return this.api.post<ApplicationItem>(`/jobs/applications/${id}/notify/`, payload);
+  }
+
   listAttachments(vacancyId: string): Observable<VacancyAttachment[]> {
     return this.api.get<VacancyAttachment[]>(`/jobs/vacancies/${vacancyId}/attachments/`);
   }

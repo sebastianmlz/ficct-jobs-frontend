@@ -32,6 +32,19 @@ export interface EmployabilityStats {
   candidates_validated: number;
   companies_total: number;
   applications_by_stage: Record<string, number>;
+  filters: {
+    since: string | null;
+    until: string | null;
+    company_id: string | null;
+    stage: string | null;
+  };
+}
+
+export interface EmployabilityFilters {
+  since?: string;
+  until?: string;
+  company_id?: string;
+  stage?: string;
 }
 
 export interface AuditEntry {
@@ -64,12 +77,46 @@ export class AdminService {
     return this.api.post(`/admin/candidates/${profileId}/validate/`, { action, reason });
   }
 
-  stats(): Observable<EmployabilityStats> {
-    return this.api.get<EmployabilityStats>('/admin/stats/employability/');
+  stats(filters: EmployabilityFilters = {}): Observable<EmployabilityStats> {
+    return this.api.get<EmployabilityStats>('/admin/stats/employability/', filters as Record<string, string>);
   }
 
-  csvExportUrl(): string {
-    return this.api.url('/admin/stats/employability.csv');
+  csvExportUrl(filters: EmployabilityFilters = {}): string {
+    return this.api.url('/admin/stats/employability.csv' + this.toQuery(filters));
+  }
+
+  pdfExportUrl(filters: EmployabilityFilters = {}): string {
+    return this.api.url('/admin/stats/employability.pdf' + this.toQuery(filters));
+  }
+
+  xlsxExportUrl(filters: EmployabilityFilters = {}): string {
+    return this.api.url('/admin/stats/employability.xlsx' + this.toQuery(filters));
+  }
+
+  downloadEmployabilityPdf(filters: EmployabilityFilters = {}): Observable<Blob> {
+    return this.downloadBlob('/admin/stats/employability.pdf', filters);
+  }
+
+  downloadEmployabilityXlsx(filters: EmployabilityFilters = {}): Observable<Blob> {
+    return this.downloadBlob('/admin/stats/employability.xlsx', filters);
+  }
+
+  private downloadBlob(path: string, filters: EmployabilityFilters): Observable<Blob> {
+    return this.api.getBlob(path + this.toQuery(filters));
+  }
+
+  private toQuery(filters: EmployabilityFilters): string {
+    const entries = Object.entries(filters).filter(
+      ([, v]) => v !== undefined && v !== null && v !== '',
+    );
+    if (entries.length === 0) {
+      return '';
+    }
+    const usp = new URLSearchParams();
+    for (const [k, v] of entries) {
+      usp.set(k, String(v));
+    }
+    return '?' + usp.toString();
   }
 
   parameters(): Observable<SystemParameter[]> {

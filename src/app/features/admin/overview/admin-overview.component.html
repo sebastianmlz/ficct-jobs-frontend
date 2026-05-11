@@ -7,8 +7,48 @@
     <a class="btn-secondary btn-sm" [href]="csvUrl()" download>
       Exportar CSV
     </a>
+    <button class="btn-secondary btn-sm" type="button" (click)="downloadPdf()" [disabled]="downloading() !== null">
+      {{ downloading() === 'pdf' ? 'Descargando…' : 'Exportar PDF' }}
+    </button>
+    <button class="btn-secondary btn-sm" type="button" (click)="downloadXlsx()" [disabled]="downloading() !== null">
+      {{ downloading() === 'xlsx' ? 'Descargando…' : 'Exportar Excel' }}
+    </button>
   </div>
 </app-page-header>
+
+<section class="rounded-xl border border-institution-border bg-white shadow-card mb-5 overflow-hidden">
+  <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+    <h2 class="heading-h2 text-sm">Filtros del reporte</h2>
+  </div>
+  <form class="grid gap-3 p-5 sm:grid-cols-4" [formGroup]="filtersForm">
+    <div>
+      <label class="label-base" for="f-since">Desde</label>
+      <input id="f-since" type="date" class="input-base" formControlName="since" />
+    </div>
+    <div>
+      <label class="label-base" for="f-until">Hasta</label>
+      <input id="f-until" type="date" class="input-base" formControlName="until" />
+    </div>
+    <div>
+      <label class="label-base" for="f-stage">Etapa</label>
+      <select id="f-stage" class="input-base" formControlName="stage">
+        <option value="">Todas</option>
+        <option value="received">Recibida</option>
+        <option value="preselected">Preseleccionada</option>
+        <option value="interview_scheduled">Entrevista agendada</option>
+        <option value="interview_done">Entrevista realizada</option>
+        <option value="offer">Oferta</option>
+        <option value="hired">Contratada</option>
+        <option value="rejected">Rechazada</option>
+        <option value="withdrawn">Retirada</option>
+      </select>
+    </div>
+    <div class="flex items-end gap-2">
+      <button class="btn-primary btn-sm" type="button" (click)="refreshStats()">Aplicar</button>
+      <button class="btn-ghost btn-sm" type="button" (click)="resetFilters()">Limpiar</button>
+    </div>
+  </form>
+</section>
 
 <section class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
   @for (k of metrics; track k.key) {

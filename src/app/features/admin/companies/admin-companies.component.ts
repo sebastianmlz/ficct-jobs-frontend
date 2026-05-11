@@ -11,12 +11,14 @@ const STATUS_CLASS: Record<string, string> = {
   active: 'badge-success',
   pending_validation: 'badge-warning',
   suspended: 'badge-danger',
+  rejected: 'badge-danger',
 };
 
 const STATUS_LABEL: Record<string, string> = {
   active: 'Activa',
   pending_validation: 'Pendiente',
   suspended: 'Suspendida',
+  rejected: 'Rechazada',
 };
 
 @Component({
@@ -39,13 +41,17 @@ export class AdminCompaniesComponent implements OnInit {
   });
 
   private readonly itemsSignal = signal<CompanySummary[]>([]);
+  private readonly pendingSignal = signal<CompanySummary[]>([]);
   private readonly loadingSignal = signal(true);
+  private readonly pendingLoadingSignal = signal(true);
   private readonly busySignal = signal(false);
   private readonly busyIdSignal = signal<string | null>(null);
   private readonly otpSignal = signal<string | null>(null);
 
   protected readonly items = this.itemsSignal.asReadonly();
+  protected readonly pending = this.pendingSignal.asReadonly();
   protected readonly loading = this.loadingSignal.asReadonly();
+  protected readonly pendingLoading = this.pendingLoadingSignal.asReadonly();
   protected readonly busy = this.busySignal.asReadonly();
   protected readonly busyId = this.busyIdSignal.asReadonly();
   protected readonly lastOtp = this.otpSignal.asReadonly();
@@ -69,16 +75,52 @@ export class AdminCompaniesComponent implements OnInit {
     }
     this.busySignal.set(true);
     this.service.register(this.form.getRawValue()).subscribe({
-      next: (response) => {
+      next: () => {
         this.busySignal.set(false);
-        this.otpSignal.set(response.one_time_password);
-        this.toast.success('Empresa registrada', 'Se aprovisionó una cuenta para el representante.');
+        // Backend no longer exposes a plaintext one-time password.
+        // The rep receives a password-reset email only after admin approval.
+        this.otpSignal.set(null);
+        this.toast.success(
+          'Empresa registrada en estado pendiente',
+          'Apruébela explícitamente para activar al representante.',
+        );
         this.form.reset({ legal_name: '', sector: '', contact_email: '', rep_email: '', rep_full_name: '' });
         this.refresh();
       },
       error: (err) => {
         this.busySignal.set(false);
         this.toast.danger('No se pudo registrar la empresa', err?.error?.error?.message ?? '');
+      },
+    });
+  }
+
+  protected approveCompany(c: CompanySummary): void {
+    this.busyIdSignal.set(c.id);
+    this.service.validate(c.id, 'approve').subscribe({
+      next: () => {
+        this.busyIdSignal.set(null);
+        this.toast.success('Empresa aprobada', 'Se envió un enlace de acceso al representante.');
+        this.refresh();
+      },
+      error: (err) => {
+        this.busyIdSignal.set(null);
+        this.toast.danger('No se pudo aprobar la empresa', err?.error?.error?.message ?? '');
+      },
+    });
+  }
+
+  protected rejectCompany(c: CompanySummary): void {
+    const reason = prompt('Motivo del rechazo (opcional):') ?? '';
+    this.busyIdSignal.set(c.id);
+    this.service.validate(c.id, 'reject', reason).subscribe({
+      next: () => {
+        this.busyIdSignal.set(null);
+        this.toast.warning('Empresa rechazada');
+        this.refresh();
+      },
+      error: (err) => {
+        this.busyIdSignal.set(null);
+        this.toast.danger('No se pudo rechazar la empresa', err?.error?.error?.message ?? '');
       },
     });
   }
@@ -101,12 +143,20 @@ export class AdminCompaniesComponent implements OnInit {
 
   private refresh(): void {
     this.loadingSignal.set(true);
+    this.pendingLoadingSignal.set(true);
     this.service.list().subscribe({
       next: (items) => {
         this.itemsSignal.set(items);
         this.loadingSignal.set(false);
       },
       error: () => this.loadingSignal.set(false),
+    });
+    this.service.listPending().subscribe({
+      next: (items) => {
+        this.pendingSignal.set(items);
+        this.pendingLoadingSignal.set(false);
+      },
+      error: () => this.pendingLoadingSignal.set(false),
     });
   }
 }

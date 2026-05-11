@@ -5,12 +5,23 @@ import { RouterLink } from '@angular/router';
 import { ApplicationItem, NotificationItem, Vacancy } from '../../core/models';
 import { vacancyStatusLabel } from '../../core/models/labels';
 import { AuthService } from '../../core/services/auth.service';
+import { IntelligenceService, RecommendedVacancy } from '../../core/services/intelligence.service';
 import { JobsService } from '../../core/services/jobs.service';
 import { NotificationsService } from '../../core/services/notifications.service';
+import { ProfileCompletion, ProfilesService } from '../../core/services/profiles.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { StageBadgeComponent } from '../../shared/components/stage-badge/stage-badge.component';
 import { IconComponent } from '../../shared/components/icon/icon.component';
+
+const SECTION_LABEL: Record<keyof ProfileCompletion['sections'], string> = {
+  full_name: 'Nombre completo',
+  headline_or_bio: 'Titular o biografía',
+  career: 'Carrera',
+  has_cv: 'CV cargado',
+  education: 'Formación',
+  skills: 'Habilidades (3 o más)',
+};
 
 const ROLE_LABEL = {
   candidate: 'Candidato',
@@ -36,6 +47,9 @@ export class DashboardComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly jobs = inject(JobsService);
   private readonly notifs = inject(NotificationsService);
+  private readonly profiles = inject(ProfilesService);
+  private readonly intelligence = inject(IntelligenceService);
+  protected readonly sectionLabel = SECTION_LABEL;
 
   protected readonly user = this.auth.user;
   protected readonly role = this.auth.role;
@@ -54,10 +68,25 @@ export class DashboardComponent implements OnInit {
   private readonly vacanciesSignal = signal<Vacancy[]>([]);
   private readonly notificationsSignal = signal<NotificationItem[]>([]);
   private readonly loadingSignal = signal(true);
+  private readonly completionSignal = signal<ProfileCompletion | null>(null);
+  private readonly recommendationsSignal = signal<RecommendedVacancy[]>([]);
+  private readonly recommendationsBusySignal = signal(false);
+  private readonly recommendationsAvailableSignal = signal(true);
   protected readonly applications = this.applicationsSignal.asReadonly();
   protected readonly vacancies = this.vacanciesSignal.asReadonly();
   protected readonly notifications = this.notificationsSignal.asReadonly();
   protected readonly loading = computed(() => this.loadingSignal());
+  protected readonly completion = this.completionSignal.asReadonly();
+  protected readonly recommendations = this.recommendationsSignal.asReadonly();
+  protected readonly recommendationsBusy = this.recommendationsBusySignal.asReadonly();
+  protected readonly recommendationsAvailable = this.recommendationsAvailableSignal.asReadonly();
+  protected readonly missingSections = computed<Array<keyof ProfileCompletion['sections']>>(() => {
+    const c = this.completionSignal();
+    if (!c) return [];
+    return (Object.entries(c.sections) as Array<[keyof ProfileCompletion['sections'], boolean]>)
+      .filter(([, ok]) => !ok)
+      .map(([k]) => k);
+  });
 
   protected readonly candidateActions = [
     { label: 'Vacantes', path: '/vacancies', icon: 'briefcase', iconBg: 'bg-ficct-50', iconColor: 'text-ficct-600' },
@@ -112,6 +141,22 @@ export class DashboardComponent implements OnInit {
       this.jobs.myApplications().subscribe({
         next: (items) => { this.applicationsSignal.set(items); this.loadingSignal.set(false); },
         error: () => this.loadingSignal.set(false),
+      });
+      this.profiles.getCompletion().subscribe({
+        next: (c) => this.completionSignal.set(c),
+        error: () => this.completionSignal.set(null),
+      });
+      this.recommendationsBusySignal.set(true);
+      this.intelligence.recommendations(5).subscribe({
+        next: (r) => {
+          this.recommendationsSignal.set(r.items ?? []);
+          this.recommendationsAvailableSignal.set(r.available);
+          this.recommendationsBusySignal.set(false);
+        },
+        error: () => {
+          this.recommendationsAvailableSignal.set(false);
+          this.recommendationsBusySignal.set(false);
+        },
       });
     } else if (role === 'company_rep') {
       this.jobs.listVacancies().subscribe({

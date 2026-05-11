@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { stageLabel } from '../../../core/models/labels';
 import {
   AdminService,
+  EmployabilityFilters,
   EmployabilityStats,
   MicroserviceHealth,
   SkillsDemandResponse,
@@ -19,13 +21,20 @@ interface MetricKey {
 @Component({
   selector: 'app-admin-overview',
   standalone: true,
-  imports: [PageHeaderComponent],
+  imports: [PageHeaderComponent, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-overview.component.html',
 })
 export class AdminOverviewComponent implements OnInit {
   private readonly admin = inject(AdminService);
   private readonly toast = inject(ToastService);
+  protected readonly filtersForm = new FormGroup({
+    since: new FormControl<string>('', { nonNullable: true }),
+    until: new FormControl<string>('', { nonNullable: true }),
+    stage: new FormControl<string>('', { nonNullable: true }),
+  });
+  private readonly downloadingSignal = signal<'pdf' | 'xlsx' | null>(null);
+  protected readonly downloading = this.downloadingSignal.asReadonly();
 
   protected readonly stageLabel = stageLabel;
   protected readonly metrics: MetricKey[] = [
@@ -70,10 +79,7 @@ export class AdminOverviewComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.admin.stats().subscribe({
-      next: (s) => this.statsSignal.set(s),
-      error: () => this.toast.danger('No se pudieron cargar las métricas'),
-    });
+    this.refreshStats();
     this.loadHealth();
     this.admin.microserviceTokens(30).subscribe({
       next: (t) => this.tokensSignal.set(t),
@@ -81,8 +87,70 @@ export class AdminOverviewComponent implements OnInit {
     });
   }
 
+  protected currentFilters(): EmployabilityFilters {
+    const v = this.filtersForm.getRawValue();
+    return {
+      since: v.since || undefined,
+      until: v.until || undefined,
+      stage: v.stage || undefined,
+    };
+  }
+
+  protected refreshStats(): void {
+    this.admin.stats(this.currentFilters()).subscribe({
+      next: (s) => this.statsSignal.set(s),
+      error: () => this.toast.danger('No se pudieron cargar las métricas'),
+    });
+  }
+
+  protected resetFilters(): void {
+    this.filtersForm.reset({ since: '', until: '', stage: '' });
+    this.refreshStats();
+  }
+
   protected csvUrl(): string {
-    return this.admin.csvExportUrl();
+    return this.admin.csvExportUrl(this.currentFilters());
+  }
+
+  protected downloadPdf(): void {
+    if (this.downloadingSignal()) return;
+    this.downloadingSignal.set('pdf');
+    this.admin.downloadEmployabilityPdf(this.currentFilters()).subscribe({
+      next: (blob) => {
+        this.downloadingSignal.set(null);
+        this.triggerDownload(blob, 'employability.pdf');
+      },
+      error: () => {
+        this.downloadingSignal.set(null);
+        this.toast.danger('No se pudo descargar el PDF');
+      },
+    });
+  }
+
+  protected downloadXlsx(): void {
+    if (this.downloadingSignal()) return;
+    this.downloadingSignal.set('xlsx');
+    this.admin.downloadEmployabilityXlsx(this.currentFilters()).subscribe({
+      next: (blob) => {
+        this.downloadingSignal.set(null);
+        this.triggerDownload(blob, 'employability.xlsx');
+      },
+      error: () => {
+        this.downloadingSignal.set(null);
+        this.toast.danger('No se pudo descargar el Excel');
+      },
+    });
+  }
+
+  private triggerDownload(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
   protected value(key: keyof EmployabilityStats): string {

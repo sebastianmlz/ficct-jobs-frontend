@@ -11,6 +11,8 @@ import { ToastService } from '../../../core/services/toast.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { StageBadgeComponent } from '../../../shared/components/stage-badge/stage-badge.component';
 
+import { AffinityDetail, IntelligenceService } from '../../../core/services/intelligence.service';
+
 const REP_STAGES: StageCode[] = ['preselected', 'interview_done', 'offer', 'hired', 'rejected'];
 
 @Component({
@@ -30,6 +32,7 @@ export class RepApplicationDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly jobs = inject(JobsService);
   private readonly interviewService = inject(InterviewsService);
+  private readonly intelligence = inject(IntelligenceService);
   private readonly toast = inject(ToastService);
 
   protected readonly stages = REP_STAGES;
@@ -42,13 +45,28 @@ export class RepApplicationDetailComponent implements OnInit {
     location_or_link: new FormControl('', { nonNullable: true }),
     notes: new FormControl('', { nonNullable: true }),
   });
+  protected readonly notifyForm = new FormGroup({
+    kind: new FormControl<'info' | 'success' | 'warning'>('info', { nonNullable: true }),
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
+    body: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(4000)] }),
+  });
 
   private readonly applicationSignal = signal<ApplicationItem | null>(null);
   private readonly interviewsSignal = signal<Interview[]>([]);
   private readonly busySignal = signal(false);
+  private readonly notifyOpenSignal = signal(false);
+  private readonly affinityOpenSignal = signal(false);
+  private readonly affinitySignal = signal<AffinityDetail | null>(null);
+  private readonly affinityBusySignal = signal(false);
+  private readonly affinityErrorSignal = signal<string | null>(null);
   protected readonly application = this.applicationSignal.asReadonly();
   protected readonly interviews = this.interviewsSignal.asReadonly();
   protected readonly busy = this.busySignal.asReadonly();
+  protected readonly notifyOpen = this.notifyOpenSignal.asReadonly();
+  protected readonly affinityOpen = this.affinityOpenSignal.asReadonly();
+  protected readonly affinity = this.affinitySignal.asReadonly();
+  protected readonly affinityBusy = this.affinityBusySignal.asReadonly();
+  protected readonly affinityError = this.affinityErrorSignal.asReadonly();
 
   ngOnInit(): void {
     this.refresh();
@@ -122,6 +140,66 @@ export class RepApplicationDetailComponent implements OnInit {
       },
       error: (err) => this.toast.danger('No se pudo cancelar la entrevista', err?.error?.error?.message ?? ''),
     });
+  }
+
+  protected openNotifyModal(): void {
+    this.notifyForm.reset({ kind: 'info', title: '', body: '' });
+    this.notifyOpenSignal.set(true);
+  }
+
+  protected closeNotifyModal(): void {
+    this.notifyOpenSignal.set(false);
+  }
+
+  protected sendNotification(): void {
+    const id = this.applicationId();
+    if (!id || this.notifyForm.invalid || this.busySignal()) {
+      this.notifyForm.markAllAsTouched();
+      return;
+    }
+    this.busySignal.set(true);
+    this.jobs.notifyApplication(id, this.notifyForm.getRawValue()).subscribe({
+      next: () => {
+        this.busySignal.set(false);
+        this.notifyOpenSignal.set(false);
+        this.toast.success('Notificación enviada al candidato');
+      },
+      error: (err) => {
+        this.busySignal.set(false);
+        this.toast.danger('No se pudo enviar la notificación', err?.error?.error?.message ?? '');
+      },
+    });
+  }
+
+  protected openAffinityModal(): void {
+    const id = this.applicationId();
+    if (!id) return;
+    this.affinityOpenSignal.set(true);
+    this.affinitySignal.set(null);
+    this.affinityErrorSignal.set(null);
+    this.affinityBusySignal.set(true);
+    this.intelligence.affinityDetail(id).subscribe({
+      next: (detail) => {
+        this.affinitySignal.set(detail);
+        this.affinityBusySignal.set(false);
+      },
+      error: (err) => {
+        this.affinityBusySignal.set(false);
+        const msg = err?.error?.message
+          ?? err?.error?.error?.message
+          ?? 'El análisis de afinidad no está disponible.';
+        this.affinityErrorSignal.set(msg);
+      },
+    });
+  }
+
+  protected closeAffinityModal(): void {
+    this.affinityOpenSignal.set(false);
+  }
+
+  protected coveragePercent(): number {
+    const a = this.affinitySignal();
+    return a ? Math.round(a.coverage * 100) : 0;
   }
 
   private applicationId(): string | null {

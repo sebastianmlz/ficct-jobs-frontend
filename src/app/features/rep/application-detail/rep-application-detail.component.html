@@ -7,6 +7,12 @@
     <div class="mt-4 flex flex-wrap items-center gap-2">
       <a class="btn-ghost btn-sm" [routerLink]="['/rep/vacancies', a.vacancy_id, 'applicants']">←</a>
       <app-stage-badge [value]="a.current_stage"></app-stage-badge>
+      <button class="btn-secondary btn-sm" type="button" (click)="openAffinityModal()">
+        Ver detalle de afinidad
+      </button>
+      <button class="btn-secondary btn-sm" type="button" (click)="openNotifyModal()">
+        Enviar notificación
+      </button>
     </div>
   </app-page-header>
 
@@ -126,5 +132,107 @@
     @for (i of [1,2]; track i) {
       <div class="h-32 animate-pulse rounded-xl border border-institution-border bg-white"></div>
     }
+  </div>
+}
+
+@if (notifyOpen()) {
+  <div class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" (click)="closeNotifyModal()">
+    <div class="w-full max-w-md rounded-xl bg-white shadow-xl" (click)="$event.stopPropagation()">
+      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+        <h2 class="heading-h2 text-sm">Enviar notificación al candidato</h2>
+      </div>
+      <form class="p-5 space-y-3" [formGroup]="notifyForm" (ngSubmit)="sendNotification()" novalidate>
+        <div>
+          <label class="label-base" for="notify-kind">Tipo</label>
+          <select id="notify-kind" class="input-base" formControlName="kind">
+            <option value="info">Informativo</option>
+            <option value="success">Éxito</option>
+            <option value="warning">Aviso</option>
+          </select>
+        </div>
+        <div>
+          <label class="label-base" for="notify-title">Asunto</label>
+          <input id="notify-title" class="input-base" formControlName="title" maxlength="200" />
+        </div>
+        <div>
+          <label class="label-base" for="notify-body">Mensaje</label>
+          <textarea id="notify-body" class="input-base h-32" formControlName="body" maxlength="4000" placeholder="Escriba su mensaje al candidato (opcional)"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button class="btn-ghost btn-sm" type="button" (click)="closeNotifyModal()">Cancelar</button>
+          <button class="btn-primary btn-sm" type="submit" [disabled]="notifyForm.invalid || busy()">
+            {{ busy() ? 'Enviando…' : 'Enviar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+@if (affinityOpen()) {
+  <div class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" (click)="closeAffinityModal()">
+    <div class="w-full max-w-2xl rounded-xl bg-white shadow-xl" (click)="$event.stopPropagation()">
+      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5 flex items-center justify-between">
+        <h2 class="heading-h2 text-sm">Detalle de afinidad</h2>
+        <button class="btn-ghost btn-sm" type="button" (click)="closeAffinityModal()">Cerrar</button>
+      </div>
+      <div class="p-5">
+        @if (affinityBusy()) {
+          <div class="space-y-3">
+            @for (i of [1,2,3]; track i) {
+              <div class="h-6 w-full animate-pulse rounded bg-slate-100"></div>
+            }
+            <div class="h-32 w-full animate-pulse rounded bg-slate-100"></div>
+          </div>
+        } @else if (affinityError()) {
+          <div class="alert-danger text-sm">{{ affinityError() }}</div>
+        } @else {
+          @if (affinity(); as d) {
+            <div class="mb-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary">Candidato</p>
+              <p class="font-display text-base font-semibold text-institution-navy">{{ d.candidate.name || d.candidate.email }}</p>
+              <p class="text-xs text-institution-text-secondary">{{ d.candidate.email }}</p>
+            </div>
+            <div class="mb-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary">Cobertura</p>
+              <div class="mt-1.5 h-3 w-full rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full bg-ficct-500" [style.width.%]="coveragePercent()"></div>
+              </div>
+              <p class="mt-1 text-xs text-institution-text-secondary">{{ coveragePercent() }}% del perfil cumple con los requisitos</p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.12em] text-emerald-700">Habilidades coincidentes</p>
+                @if (d.matched_skills.length) {
+                  <div class="mt-1.5 flex flex-wrap gap-1.5">
+                    @for (s of d.matched_skills; track s) {
+                      <span class="badge-success">{{ s }}</span>
+                    }
+                  </div>
+                } @else {
+                  <p class="mt-1 text-xs text-institution-text-secondary">Sin coincidencias.</p>
+                }
+              </div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">Habilidades faltantes</p>
+                @if (d.missing_skills.length) {
+                  <div class="mt-1.5 flex flex-wrap gap-1.5">
+                    @for (s of d.missing_skills; track s) {
+                      <span class="badge-warning">{{ s }}</span>
+                    }
+                  </div>
+                } @else {
+                  <p class="mt-1 text-xs text-institution-text-secondary">No faltan requisitos.</p>
+                }
+              </div>
+            </div>
+            <div class="mt-5">
+              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary">Análisis cualitativo</p>
+              <p class="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-institution-text-primary">{{ d.narrative }}</p>
+            </div>
+          }
+        }
+      </div>
+    </div>
   </div>
 }

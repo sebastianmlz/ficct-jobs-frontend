@@ -25,6 +25,79 @@
           }
         </div>
 
+        @if (completion(); as c) {
+          <section class="rounded-xl border border-institution-border bg-white p-5 shadow-card">
+            <div class="flex items-baseline justify-between">
+              <div>
+                <h2 class="heading-h2 text-base">Completitud del perfil</h2>
+                <p class="mt-0.5 text-xs text-institution-text-secondary">
+                  {{ c.completed_sections }} de {{ c.total_sections }} secciones completas
+                </p>
+              </div>
+              <p class="font-display text-2xl font-extrabold text-institution-navy">{{ c.percent }}%</p>
+            </div>
+            <div class="mt-3 h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full bg-ficct-500 transition-all" [style.width.%]="c.percent"></div>
+            </div>
+            @if (missingSections().length > 0) {
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                @for (key of missingSections(); track key) {
+                  <span class="badge-warning">{{ sectionLabel[key] }}</span>
+                }
+              </div>
+              <a class="mt-3 inline-block btn-ghost btn-sm" routerLink="/profile">Completar perfil</a>
+            } @else {
+              <p class="mt-3 text-xs text-emerald-700">Su perfil está completo. ¡Excelente!</p>
+            }
+          </section>
+        }
+
+        <section>
+          <div class="section-header">
+            <h2 class="heading-h2 text-base">Recomendaciones para usted</h2>
+            <a class="btn-ghost btn-sm" routerLink="/vacancies">Ver todas las vacantes</a>
+          </div>
+          @if (recommendationsBusy()) {
+            <div class="space-y-2">
+              @for (i of [1,2,3]; track i) {
+                <div class="h-16 animate-pulse rounded-lg bg-slate-100"></div>
+              }
+            </div>
+          } @else if (!recommendationsAvailable()) {
+            <div class="rounded-xl border border-dashed border-institution-border bg-white px-4 py-6 text-center text-sm text-institution-text-secondary">
+              Las recomendaciones de IA no están disponibles temporalmente.
+            </div>
+          } @else if (recommendations().length === 0) {
+            <app-empty-state
+              title="Sin recomendaciones todavía"
+              description="Complete su perfil y suba su CV para recibir recomendaciones personalizadas."
+            >
+              <a class="btn-primary btn-sm" routerLink="/profile">Mejorar perfil</a>
+            </app-empty-state>
+          } @else {
+            <div class="grid gap-2 sm:grid-cols-2">
+              @for (r of recommendations(); track r.vacancy_id) {
+                <a [routerLink]="['/vacancies', r.vacancy_id]"
+                   class="block rounded-lg border border-institution-border bg-white p-3.5 shadow-card hover:shadow-card-hover hover:border-ficct-200">
+                  <p class="font-semibold text-sm text-institution-text-primary line-clamp-1">{{ r.title }}</p>
+                  <p class="mt-0.5 text-xs text-institution-text-secondary line-clamp-1">{{ r.company_name }}</p>
+                  <div class="mt-2 flex items-center gap-2">
+                    <span class="badge-info text-xs">{{ r.modality }}</span>
+                    @if (r.location) {
+                      <span class="text-xs text-institution-text-secondary">{{ r.location }}</span>
+                    }
+                    @if (r.score !== null && r.score !== undefined) {
+                      <span class="ml-auto text-xs font-mono text-ficct-700">
+                        {{ (r.score * 100).toFixed(0) }}% afinidad
+                      </span>
+                    }
+                  </div>
+                </a>
+              }
+            </div>
+          }
+        </section>
+
         <section>
           <div class="section-header">
             <h2 class="heading-h2 text-base">Postulaciones recientes</h2>

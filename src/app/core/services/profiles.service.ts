@@ -27,6 +27,20 @@ export interface EducationItem {
   updated_at: string;
 }
 
+export interface ProfileCompletion {
+  percent: number;
+  total_sections: number;
+  completed_sections: number;
+  sections: {
+    full_name: boolean;
+    headline_or_bio: boolean;
+    career: boolean;
+    has_cv: boolean;
+    education: boolean;
+    skills: boolean;
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProfilesService {
   private readonly api = inject(ApiService);
@@ -37,6 +51,10 @@ export class ProfilesService {
 
   updateMyProfile(payload: Partial<CandidateProfile>): Observable<CandidateProfile> {
     return this.api.patch<CandidateProfile>('/profile/me/', payload);
+  }
+
+  getCompletion(): Observable<ProfileCompletion> {
+    return this.api.get<ProfileCompletion>('/profile/me/completion/');
   }
 
   listEducation(): Observable<EducationItem[]> {

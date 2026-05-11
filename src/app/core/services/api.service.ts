@@ -15,6 +15,13 @@ export class ApiService {
     return this.http.get<T>(this.url(path), { params: this.params(params) });
   }
 
+  getBlob(path: string, params?: Params): Observable<Blob> {
+    return this.http.get(this.url(path), {
+      params: this.params(params),
+      responseType: 'blob',
+    });
+  }
+
   post<T>(path: string, body?: unknown, options?: { isMultipart?: boolean }): Observable<T> {
     if (options?.isMultipart) {
       return this.http.post<T>(this.url(path), body);
