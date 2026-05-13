@@ -7,7 +7,11 @@
     @for (f of filters; track f.key) {
       <button
         class="rounded-full border px-3 py-1 text-xs font-medium transition-colors"
-        [class]="active() === f.key ? 'border-ficct-500 bg-ficct-50 text-ficct-700' : 'border-institution-border bg-white text-institution-text-secondary hover:border-ficct-300 hover:text-ficct-600'"
+        [class]="
+          active() === f.key
+            ? 'border-ficct-500 bg-ficct-50 text-ficct-700'
+            : 'border-institution-border bg-white text-institution-text-secondary hover:border-ficct-300 hover:text-ficct-600'
+        "
         type="button"
         (click)="setFilter(f.key)"
       >
@@ -19,8 +23,10 @@
 
 @if (loading()) {
   <div class="space-y-3">
-    @for (i of [1,2,3]; track i) {
-      <div class="h-28 animate-pulse rounded-xl border border-institution-border bg-white"></div>
+    @for (i of [1, 2, 3]; track i) {
+      <div
+        class="h-28 animate-pulse rounded-xl border border-institution-border bg-white"
+      ></div>
     }
   </div>
 } @else if (visible().length === 0) {
@@ -31,28 +37,58 @@
 } @else {
   <div class="space-y-3">
     @for (v of visible(); track v.id) {
-      <div class="rounded-xl border border-institution-border bg-white p-5 shadow-card">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div
+        class="rounded-xl border border-institution-border bg-white p-5 shadow-card"
+      >
+        <div
+          class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+        >
           <div class="min-w-0">
-            <p class="font-display font-semibold text-institution-text-primary">{{ v.title }}</p>
-            <p class="mt-0.5 text-xs font-medium uppercase tracking-wider text-institution-text-secondary">{{ v.company_name }} · {{ v.modality }}</p>
-            <p class="mt-2 line-clamp-2 text-sm text-institution-text-secondary">{{ v.description }}</p>
-            <p class="mt-2 text-xs text-institution-text-secondary">Creada el {{ v.created_at | date:'dd MMM yyyy' }}</p>
+            <p class="font-display font-semibold text-institution-text-primary">
+              {{ v.title }}
+            </p>
+            <p
+              class="mt-0.5 text-xs font-medium uppercase tracking-wider text-institution-text-secondary"
+            >
+              {{ v.company_name }} · {{ v.modality }}
+            </p>
+            <p
+              class="mt-2 line-clamp-2 text-sm text-institution-text-secondary"
+            >
+              {{ v.description }}
+            </p>
+            <p class="mt-2 text-xs text-institution-text-secondary">
+              Creada el {{ v.created_at | date: "dd MMM yyyy" }}
+            </p>
           </div>
           <div class="flex shrink-0 flex-col items-start gap-2 sm:items-end">
-            <span [class]="badgeClass(v.status)">{{ statusLabel(v.status) }}</span>
-            @if (v.status === 'pending_review') {
+            <span [class]="badgeClass(v.status)">{{
+              statusLabel(v.status)
+            }}</span>
+            @if (v.status === "pending_review") {
               <div class="flex gap-2">
-                <button class="btn-primary btn-sm" type="button" (click)="approve(v)" [disabled]="busyId() === v.id">
+                <button
+                  class="btn-primary btn-sm"
+                  type="button"
+                  (click)="approve(v)"
+                  [disabled]="busyId() === v.id"
+                >
                   Aprobar
                 </button>
-                <button class="btn-ghost btn-sm" type="button" (click)="reject(v)" [disabled]="busyId() === v.id">
+                <button
+                  class="btn-ghost btn-sm"
+                  type="button"
+                  (click)="reject(v)"
+                  [disabled]="busyId() === v.id"
+                >
                   Rechazar
                 </button>
               </div>
             }
-            @if (v.status === 'rejected' && v.reject_reason) {
-              <p class="max-w-xs text-xs italic text-status-danger">"{{ v.reject_reason }}"</p>
+            @if (v.status === "rejected" && v.reject_reason) {
+              <p class="max-w-xs text-xs italic text-status-danger">
+                "{{ v.reject_reason }}"
+              </p>
             }
           </div>
         </div>

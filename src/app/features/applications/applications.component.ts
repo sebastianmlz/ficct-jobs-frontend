@@ -1,20 +1,32 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { DatePipe } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+} from "@angular/core";
+import { RouterLink } from "@angular/router";
 
-import { ApplicationItem } from '../../core/models';
-import { stageLabel } from '../../core/models/labels';
-import { JobsService } from '../../core/services/jobs.service';
-import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { StageBadgeComponent } from '../../shared/components/stage-badge/stage-badge.component';
+import { ApplicationItem } from "../../core/models";
+import { stageLabel } from "../../core/models/labels";
+import { JobsService } from "../../core/services/jobs.service";
+import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { StageBadgeComponent } from "../../shared/components/stage-badge/stage-badge.component";
 
 @Component({
-  selector: 'app-applications',
+  selector: "app-applications",
   standalone: true,
-  imports: [DatePipe, RouterLink, PageHeaderComponent, EmptyStateComponent, StageBadgeComponent],
+  imports: [
+    DatePipe,
+    RouterLink,
+    PageHeaderComponent,
+    EmptyStateComponent,
+    StageBadgeComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './applications.component.html',
+  templateUrl: "./applications.component.html",
 })
 export class ApplicationsComponent implements OnInit {
   private readonly jobs = inject(JobsService);
@@ -43,7 +55,7 @@ export class ApplicationsComponent implements OnInit {
   }
 
   protected canWithdraw(a: ApplicationItem): boolean {
-    return a.current_stage === 'received' || a.current_stage === 'preselected';
+    return a.current_stage === "received" || a.current_stage === "preselected";
   }
 
   protected withdraw(id: string): void {

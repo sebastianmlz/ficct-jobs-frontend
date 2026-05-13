@@ -6,8 +6,10 @@
 
 @if (loading()) {
   <div class="space-y-3">
-    @for (i of [1,2,3]; track i) {
-      <div class="h-24 animate-pulse rounded-xl border border-institution-border bg-white"></div>
+    @for (i of [1, 2, 3]; track i) {
+      <div
+        class="h-24 animate-pulse rounded-xl border border-institution-border bg-white"
+      ></div>
     }
   </div>
 } @else if (items().length === 0) {
@@ -20,16 +22,23 @@
 } @else {
   <div class="space-y-3">
     @for (a of items(); track a.id) {
-      <div class="rounded-xl border border-institution-border bg-white p-5 shadow-card">
+      <div
+        class="rounded-xl border border-institution-border bg-white p-5 shadow-card"
+      >
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0">
             <a
               [routerLink]="['/vacancies', a.vacancy_id]"
               class="font-display text-base font-semibold text-institution-text-primary transition hover:text-ficct-600 line-clamp-1"
-            >{{ a.vacancy_title }}</a>
-            <p class="mt-0.5 text-xs font-medium uppercase tracking-wider text-institution-text-secondary">{{ a.company_name }}</p>
+              >{{ a.vacancy_title }}</a
+            >
+            <p
+              class="mt-0.5 text-xs font-medium uppercase tracking-wider text-institution-text-secondary"
+            >
+              {{ a.company_name }}
+            </p>
             <p class="mt-1 text-xs text-institution-text-secondary">
-              Postulado el {{ a.applied_at | date:'dd MMM yyyy' }}
+              Postulado el {{ a.applied_at | date: "dd MMM yyyy" }}
             </p>
           </div>
           <div class="shrink-0">
@@ -38,22 +47,48 @@
         </div>
         @if (a.history.length) {
           <div class="mt-4 border-t border-institution-border pt-3">
-            <p class="mb-2 text-xs font-semibold uppercase tracking-wider text-institution-text-secondary">Historial</p>
-            <ol class="relative border-l border-institution-border/60 pl-4 text-xs space-y-1.5">
+            <p
+              class="mb-2 text-xs font-semibold uppercase tracking-wider text-institution-text-secondary"
+            >
+              Historial
+            </p>
+            <ol
+              class="relative border-l border-institution-border/60 pl-4 text-xs space-y-1.5"
+            >
               @for (h of a.history; track h.at) {
                 <li class="flex items-center justify-between gap-4">
-                  <span class="font-medium text-institution-text-primary">{{ stage(h.stage) }}</span>
-                  <span class="text-institution-text-secondary">{{ h.at | date:'dd MMM, HH:mm' }}</span>
+                  <span class="font-medium text-institution-text-primary">{{
+                    stage(h.stage)
+                  }}</span>
+                  <span class="text-institution-text-secondary">{{
+                    h.at | date: "dd MMM, HH:mm"
+                  }}</span>
                 </li>
               }
             </ol>
           </div>
         }
         @if (canWithdraw(a)) {
-          <div class="mt-3 flex justify-end border-t border-institution-border/60 pt-3">
-            <button class="btn-ghost btn-sm text-xs text-red-600 hover:bg-red-50 hover:text-red-700" type="button" (click)="withdraw(a.id)">
-              <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          <div
+            class="mt-3 flex justify-end border-t border-institution-border/60 pt-3"
+          >
+            <button
+              class="btn-ghost btn-sm text-xs text-red-600 hover:bg-red-50 hover:text-red-700"
+              type="button"
+              (click)="withdraw(a.id)"
+            >
+              <svg
+                class="h-3.5 w-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
               Retirar
             </button>

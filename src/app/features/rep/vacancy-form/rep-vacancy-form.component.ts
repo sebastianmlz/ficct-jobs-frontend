@@ -1,18 +1,30 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 
-import { ApiErrorEnvelope, Vacancy } from '../../../core/models';
-import { JobsService } from '../../../core/services/jobs.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { ApiErrorEnvelope, Vacancy } from "../../../core/models";
+import { JobsService } from "../../../core/services/jobs.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
-  selector: 'app-rep-vacancy-form',
+  selector: "app-rep-vacancy-form",
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './rep-vacancy-form.component.html',
+  templateUrl: "./rep-vacancy-form.component.html",
 })
 export class RepVacancyFormComponent implements OnInit {
   private readonly jobs = inject(JobsService);
@@ -21,12 +33,20 @@ export class RepVacancyFormComponent implements OnInit {
   private readonly toast = inject(ToastService);
 
   protected readonly form = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(4)] }),
-    description: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(10)] }),
-    requirements: new FormControl('', { nonNullable: true }),
-    modality: new FormControl<'onsite' | 'remote' | 'hybrid'>('remote', { nonNullable: true }),
-    location: new FormControl('', { nonNullable: true }),
-    salary_currency: new FormControl('', { nonNullable: true }),
+    title: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(4)],
+    }),
+    description: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(10)],
+    }),
+    requirements: new FormControl("", { nonNullable: true }),
+    modality: new FormControl<"onsite" | "remote" | "hybrid">("remote", {
+      nonNullable: true,
+    }),
+    location: new FormControl("", { nonNullable: true }),
+    salary_currency: new FormControl("", { nonNullable: true }),
     salary_min: new FormControl<number | null>(null),
     salary_max: new FormControl<number | null>(null),
   });
@@ -39,12 +59,12 @@ export class RepVacancyFormComponent implements OnInit {
   protected readonly errorMessage = this.errorSignal.asReadonly();
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.idSignal.set(id);
       this.jobs.getVacancy(id).subscribe({
         next: (v) => this.form.patchValue(this.toForm(v)),
-        error: () => this.toast.danger('Vacante no encontrada'),
+        error: () => this.toast.danger("Vacante no encontrada"),
       });
     }
   }
@@ -64,13 +84,15 @@ export class RepVacancyFormComponent implements OnInit {
     obs.subscribe({
       next: () => {
         this.busySignal.set(false);
-        this.toast.success(id ? 'Vacante actualizada' : 'Vacante creada');
-        void this.router.navigate(['/rep/vacancies']);
+        this.toast.success(id ? "Vacante actualizada" : "Vacante creada");
+        void this.router.navigate(["/rep/vacancies"]);
       },
       error: (err) => {
         this.busySignal.set(false);
         const env = err?.error as ApiErrorEnvelope | undefined;
-        this.errorSignal.set(env?.error?.message ?? 'No se pudo guardar la vacante.');
+        this.errorSignal.set(
+          env?.error?.message ?? "No se pudo guardar la vacante.",
+        );
       },
     });
   }

@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
 
-import { ApiService } from './api.service';
+import { ApiService } from "./api.service";
 
 export interface CandidateRoster {
   profile_id: string;
@@ -10,7 +10,7 @@ export interface CandidateRoster {
   full_name: string;
   career: string;
   graduation_year: number | null;
-  status: 'unvalidated' | 'approved' | 'rejected';
+  status: "unvalidated" | "approved" | "rejected";
   reviewed_at: string | null;
   created_at: string;
 }
@@ -19,7 +19,7 @@ export interface SystemParameter {
   id: string;
   key: string;
   value: string;
-  value_type: 'string' | 'int' | 'float' | 'bool' | 'json';
+  value_type: "string" | "int" | "float" | "bool" | "json";
   description: string;
   created_at: string;
   updated_at: string;
@@ -65,98 +65,144 @@ export interface MicroserviceHealth {
   error?: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class AdminService {
   private readonly api = inject(ApiService);
 
   candidates(): Observable<CandidateRoster[]> {
-    return this.api.get<CandidateRoster[]>('/admin/candidates/');
+    return this.api.get<CandidateRoster[]>("/admin/candidates/");
   }
 
-  validateCandidate(profileId: string, action: 'approved' | 'rejected', reason = ''): Observable<unknown> {
-    return this.api.post(`/admin/candidates/${profileId}/validate/`, { action, reason });
+  validateCandidate(
+    profileId: string,
+    action: "approved" | "rejected",
+    reason = "",
+  ): Observable<unknown> {
+    return this.api.post(`/admin/candidates/${profileId}/validate/`, {
+      action,
+      reason,
+    });
   }
 
   stats(filters: EmployabilityFilters = {}): Observable<EmployabilityStats> {
-    return this.api.get<EmployabilityStats>('/admin/stats/employability/', filters as Record<string, string>);
+    return this.api.get<EmployabilityStats>(
+      "/admin/stats/employability/",
+      filters as Record<string, string>,
+    );
   }
 
   csvExportUrl(filters: EmployabilityFilters = {}): string {
-    return this.api.url('/admin/stats/employability.csv' + this.toQuery(filters));
+    return this.api.url(
+      "/admin/stats/employability.csv" + this.toQuery(filters),
+    );
   }
 
   pdfExportUrl(filters: EmployabilityFilters = {}): string {
-    return this.api.url('/admin/stats/employability.pdf' + this.toQuery(filters));
+    return this.api.url(
+      "/admin/stats/employability.pdf" + this.toQuery(filters),
+    );
   }
 
   xlsxExportUrl(filters: EmployabilityFilters = {}): string {
-    return this.api.url('/admin/stats/employability.xlsx' + this.toQuery(filters));
+    return this.api.url(
+      "/admin/stats/employability.xlsx" + this.toQuery(filters),
+    );
   }
 
-  downloadEmployabilityPdf(filters: EmployabilityFilters = {}): Observable<Blob> {
-    return this.downloadBlob('/admin/stats/employability.pdf', filters);
+  downloadEmployabilityPdf(
+    filters: EmployabilityFilters = {},
+  ): Observable<Blob> {
+    return this.downloadBlob("/admin/stats/employability.pdf", filters);
   }
 
-  downloadEmployabilityXlsx(filters: EmployabilityFilters = {}): Observable<Blob> {
-    return this.downloadBlob('/admin/stats/employability.xlsx', filters);
+  downloadEmployabilityXlsx(
+    filters: EmployabilityFilters = {},
+  ): Observable<Blob> {
+    return this.downloadBlob("/admin/stats/employability.xlsx", filters);
   }
 
-  private downloadBlob(path: string, filters: EmployabilityFilters): Observable<Blob> {
+  private downloadBlob(
+    path: string,
+    filters: EmployabilityFilters,
+  ): Observable<Blob> {
     return this.api.getBlob(path + this.toQuery(filters));
   }
 
   private toQuery(filters: EmployabilityFilters): string {
     const entries = Object.entries(filters).filter(
-      ([, v]) => v !== undefined && v !== null && v !== '',
+      ([, v]) => v !== undefined && v !== null && v !== "",
     );
     if (entries.length === 0) {
-      return '';
+      return "";
     }
     const usp = new URLSearchParams();
     for (const [k, v] of entries) {
       usp.set(k, String(v));
     }
-    return '?' + usp.toString();
+    return "?" + usp.toString();
   }
 
   parameters(): Observable<SystemParameter[]> {
-    return this.api.get<SystemParameter[]>('/admin/params/');
+    return this.api.get<SystemParameter[]>("/admin/params/");
   }
 
   setParameter(
     key: string,
-    payload: { value: string; value_type: SystemParameter['value_type']; description?: string },
+    payload: {
+      value: string;
+      value_type: SystemParameter["value_type"];
+      description?: string;
+    },
   ): Observable<SystemParameter> {
     return this.api.put<SystemParameter>(`/admin/params/${key}/`, payload);
   }
 
-  audit(filters: { entity_type?: string; action?: string; limit?: number } = {}): Observable<AuditEntry[]> {
-    return this.api.get<AuditEntry[]>('/admin/audit/', filters);
+  audit(
+    filters: { entity_type?: string; action?: string; limit?: number } = {},
+  ): Observable<AuditEntry[]> {
+    return this.api.get<AuditEntry[]>("/admin/audit/", filters);
   }
 
   microserviceHealth(): Observable<MicroserviceHealth> {
-    return this.api.get<MicroserviceHealth>('/admin/microservice/health/');
+    return this.api.get<MicroserviceHealth>("/admin/microservice/health/");
   }
 
   microserviceTokens(days = 30): Observable<TokenUsageReport> {
-    return this.api.get<TokenUsageReport>('/admin/microservice/tokens/', { days });
+    return this.api.get<TokenUsageReport>("/admin/microservice/tokens/", {
+      days,
+    });
   }
 
   skillsDemand(): Observable<SkillsDemandResponse> {
-    return this.api.get<SkillsDemandResponse>('/intelligence/skills-demand/');
+    return this.api.get<SkillsDemandResponse>("/intelligence/skills-demand/");
   }
 
-  notifyUser(payload: { recipient_id: string; kind: string; title: string; body?: string }): Observable<unknown> {
-    return this.api.post('/admin/notifications/', payload);
+  notifyUser(payload: {
+    recipient_id: string;
+    kind: string;
+    title: string;
+    body?: string;
+  }): Observable<unknown> {
+    return this.api.post("/admin/notifications/", payload);
   }
 }
 
 export interface TokenUsageReport {
   period_days: number;
-  totals: { calls?: number; input_tokens?: number; output_tokens?: number; total_tokens?: number };
+  totals: {
+    calls?: number;
+    input_tokens?: number;
+    output_tokens?: number;
+    total_tokens?: number;
+  };
   by_operation: Record<
     string,
-    { calls: number; input_tokens: number; output_tokens: number; total_tokens: number }
+    {
+      calls: number;
+      input_tokens: number;
+      output_tokens: number;
+      total_tokens: number;
+    }
   >;
   generated_at: string;
 }

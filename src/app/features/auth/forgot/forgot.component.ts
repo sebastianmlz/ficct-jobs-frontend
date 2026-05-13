@@ -1,21 +1,34 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { RouterLink } from "@angular/router";
 
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from "../../../core/services/auth.service";
 
 @Component({
-  selector: 'app-forgot',
+  selector: "app-forgot",
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './forgot.component.html',
+  templateUrl: "./forgot.component.html",
 })
 export class ForgotComponent {
   private readonly auth = inject(AuthService);
 
   protected readonly form = new FormGroup({
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    email: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
   });
 
   private readonly busySignal = signal(false);

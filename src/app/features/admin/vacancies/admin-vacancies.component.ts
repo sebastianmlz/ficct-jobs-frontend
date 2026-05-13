@@ -1,22 +1,29 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { DatePipe } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from "@angular/core";
 
-import { Vacancy } from '../../../core/models';
-import { vacancyStatusLabel } from '../../../core/models/labels';
-import { JobsService } from '../../../core/services/jobs.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { Vacancy } from "../../../core/models";
+import { vacancyStatusLabel } from "../../../core/models/labels";
+import { JobsService } from "../../../core/services/jobs.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 const STATUS_CLASS: Record<string, string> = {
-  draft: 'badge-neutral',
-  pending_review: 'badge-warning',
-  active: 'badge-success',
-  rejected: 'badge-danger',
-  closed: 'badge-neutral',
+  draft: "badge-neutral",
+  pending_review: "badge-warning",
+  active: "badge-success",
+  rejected: "badge-danger",
+  closed: "badge-neutral",
 };
 
-type FilterKey = 'pending_review' | 'active' | 'rejected' | 'closed' | 'all';
+type FilterKey = "pending_review" | "active" | "rejected" | "closed" | "all";
 
 interface Filter {
   key: FilterKey;
@@ -24,24 +31,24 @@ interface Filter {
 }
 
 @Component({
-  selector: 'app-admin-vacancies',
+  selector: "app-admin-vacancies",
   standalone: true,
   imports: [DatePipe, PageHeaderComponent, EmptyStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './admin-vacancies.component.html',
+  templateUrl: "./admin-vacancies.component.html",
 })
 export class AdminVacanciesComponent implements OnInit {
   private readonly jobs = inject(JobsService);
   private readonly toast = inject(ToastService);
 
   protected readonly filters: Filter[] = [
-    { key: 'pending_review', label: 'En revisión' },
-    { key: 'active', label: 'Activas' },
-    { key: 'rejected', label: 'Rechazadas' },
-    { key: 'closed', label: 'Cerradas' },
-    { key: 'all', label: 'Todas' },
+    { key: "pending_review", label: "En revisión" },
+    { key: "active", label: "Activas" },
+    { key: "rejected", label: "Rechazadas" },
+    { key: "closed", label: "Cerradas" },
+    { key: "all", label: "Todas" },
   ];
-  private readonly activeSignal = signal<FilterKey>('pending_review');
+  private readonly activeSignal = signal<FilterKey>("pending_review");
   private readonly itemsSignal = signal<Vacancy[]>([]);
   private readonly loadingSignal = signal(true);
   private readonly busyIdSignal = signal<string | null>(null);
@@ -52,7 +59,7 @@ export class AdminVacanciesComponent implements OnInit {
   protected readonly visible = computed(() => {
     const items = this.itemsSignal();
     const f = this.activeSignal();
-    return f === 'all' ? items : items.filter((v) => v.status === f);
+    return f === "all" ? items : items.filter((v) => v.status === f);
   });
 
   ngOnInit(): void {
@@ -60,7 +67,7 @@ export class AdminVacanciesComponent implements OnInit {
   }
 
   protected badgeClass(status: string): string {
-    return STATUS_CLASS[status] ?? 'badge-neutral';
+    return STATUS_CLASS[status] ?? "badge-neutral";
   }
 
   protected statusLabel(s: string): string {
@@ -73,35 +80,41 @@ export class AdminVacanciesComponent implements OnInit {
 
   protected approve(v: Vacancy): void {
     this.busyIdSignal.set(v.id);
-    this.jobs.approveVacancy(v.id, 'approve').subscribe({
+    this.jobs.approveVacancy(v.id, "approve").subscribe({
       next: () => {
         this.busyIdSignal.set(null);
-        this.toast.success('Vacante aprobada');
+        this.toast.success("Vacante aprobada");
         this.refresh();
       },
       error: (err) => {
         this.busyIdSignal.set(null);
-        this.toast.danger('No se pudo aprobar la vacante', err?.error?.error?.message ?? '');
+        this.toast.danger(
+          "No se pudo aprobar la vacante",
+          err?.error?.error?.message ?? "",
+        );
       },
     });
   }
 
   protected reject(v: Vacancy): void {
-    const reason = prompt('Motivo del rechazo:')?.trim();
+    const reason = prompt("Motivo del rechazo:")?.trim();
     if (!reason) {
-      this.toast.warning('Rechazo cancelado', 'Se requiere un motivo.');
+      this.toast.warning("Rechazo cancelado", "Se requiere un motivo.");
       return;
     }
     this.busyIdSignal.set(v.id);
-    this.jobs.approveVacancy(v.id, 'reject', reason).subscribe({
+    this.jobs.approveVacancy(v.id, "reject", reason).subscribe({
       next: () => {
         this.busyIdSignal.set(null);
-        this.toast.warning('Vacante rechazada');
+        this.toast.warning("Vacante rechazada");
         this.refresh();
       },
       error: (err) => {
         this.busyIdSignal.set(null);
-        this.toast.danger('No se pudo rechazar la vacante', err?.error?.error?.message ?? '');
+        this.toast.danger(
+          "No se pudo rechazar la vacante",
+          err?.error?.error?.message ?? "",
+        );
       },
     });
   }

@@ -1,10 +1,10 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
 
-import { ApiService } from './api.service';
+import { ApiService } from "./api.service";
 
-export type InterviewModality = 'onsite' | 'remote' | 'phone';
-export type InterviewStatus = 'scheduled' | 'done' | 'cancelled';
+export type InterviewModality = "onsite" | "remote" | "phone";
+export type InterviewStatus = "scheduled" | "done" | "cancelled";
 
 export interface Interview {
   id: string;
@@ -30,29 +30,37 @@ export interface ScheduleInterviewPayload {
   notes?: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class InterviewsService {
   private readonly api = inject(ApiService);
 
   list(applicationId: string): Observable<Interview[]> {
-    return this.api.get<Interview[]>(`/jobs/applications/${applicationId}/interviews/`);
+    return this.api.get<Interview[]>(
+      `/jobs/applications/${applicationId}/interviews/`,
+    );
   }
 
-  schedule(applicationId: string, payload: ScheduleInterviewPayload): Observable<Interview> {
-    return this.api.post<Interview>(`/jobs/applications/${applicationId}/interviews/`, payload);
+  schedule(
+    applicationId: string,
+    payload: ScheduleInterviewPayload,
+  ): Observable<Interview> {
+    return this.api.post<Interview>(
+      `/jobs/applications/${applicationId}/interviews/`,
+      payload,
+    );
   }
 
   complete(interviewId: string, notes?: string): Observable<Interview> {
     return this.api.post<Interview>(`/jobs/interviews/${interviewId}/`, {
-      action: 'complete',
-      notes: notes ?? '',
+      action: "complete",
+      notes: notes ?? "",
     });
   }
 
   cancel(interviewId: string, reason?: string): Observable<Interview> {
     return this.api.post<Interview>(`/jobs/interviews/${interviewId}/`, {
-      action: 'cancel',
-      reason: reason ?? '',
+      action: "cancel",
+      reason: reason ?? "",
     });
   }
 }

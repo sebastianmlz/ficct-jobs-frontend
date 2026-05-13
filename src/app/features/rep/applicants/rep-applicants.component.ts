@@ -1,17 +1,26 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DatePipe, DecimalPipe } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+} from "@angular/core";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 
-import { ApplicationItem, Vacancy } from '../../../core/models';
-import { JobsService } from '../../../core/services/jobs.service';
-import { RankedCandidate, RankingService } from '../../../core/services/ranking.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { StageBadgeComponent } from '../../../shared/components/stage-badge/stage-badge.component';
+import { ApplicationItem, Vacancy } from "../../../core/models";
+import { JobsService } from "../../../core/services/jobs.service";
+import {
+  RankedCandidate,
+  RankingService,
+} from "../../../core/services/ranking.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { StageBadgeComponent } from "../../../shared/components/stage-badge/stage-badge.component";
 
 @Component({
-  selector: 'app-rep-applicants',
+  selector: "app-rep-applicants",
   standalone: true,
   imports: [
     DatePipe,
@@ -22,7 +31,7 @@ import { StageBadgeComponent } from '../../../shared/components/stage-badge/stag
     StageBadgeComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './rep-applicants.component.html',
+  templateUrl: "./rep-applicants.component.html",
 })
 export class RepApplicantsComponent implements OnInit {
   private readonly jobs = inject(JobsService);
@@ -43,13 +52,13 @@ export class RepApplicantsComponent implements OnInit {
   protected readonly rankingBusy = this.rankingBusySignal.asReadonly();
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (!id) {
       return;
     }
     this.jobs.getVacancy(id).subscribe({
       next: (v) => this.vacancySignal.set(v),
-      error: () => this.toast.danger('Vacante no encontrada'),
+      error: () => this.toast.danger("Vacante no encontrada"),
     });
     this.jobs.vacancyApplications(id).subscribe({
       next: (items) => {
@@ -61,12 +70,12 @@ export class RepApplicantsComponent implements OnInit {
   }
 
   protected csvUrl(): string {
-    const id = this.route.snapshot.paramMap.get('id');
-    return id ? this.jobs.rankingCsvUrl(id) : '#';
+    const id = this.route.snapshot.paramMap.get("id");
+    return id ? this.jobs.rankingCsvUrl(id) : "#";
   }
 
   protected loadRanking(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (!id || this.rankingBusySignal()) {
       return;
     }
@@ -76,12 +85,18 @@ export class RepApplicantsComponent implements OnInit {
         this.rankingSignal.set(r.ranked ?? []);
         this.rankingBusySignal.set(false);
         if ((r.ranked ?? []).length === 0) {
-          this.toast.info('Aún no hay coincidencias', 'Invite a los candidatos a subir su CV.');
+          this.toast.info(
+            "Aún no hay coincidencias",
+            "Invite a los candidatos a subir su CV.",
+          );
         }
       },
       error: (err) => {
         this.rankingBusySignal.set(false);
-        this.toast.danger('Análisis no disponible', err?.error?.error?.message ?? '');
+        this.toast.danger(
+          "Análisis no disponible",
+          err?.error?.error?.message ?? "",
+        );
       },
     });
   }

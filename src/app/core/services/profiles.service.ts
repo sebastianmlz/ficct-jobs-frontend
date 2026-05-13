@@ -1,9 +1,9 @@
-import { HttpEvent } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpEvent } from "@angular/common/http";
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
 
-import { CandidateProfile, DocumentItem } from '../models';
-import { ApiService } from './api.service';
+import { CandidateProfile, DocumentItem } from "../models";
+import { ApiService } from "./api.service";
 
 export interface SkillItem {
   id: string;
@@ -41,28 +41,32 @@ export interface ProfileCompletion {
   };
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class ProfilesService {
   private readonly api = inject(ApiService);
 
   getMyProfile(): Observable<CandidateProfile> {
-    return this.api.get<CandidateProfile>('/profile/me/');
+    return this.api.get<CandidateProfile>("/profile/me/");
   }
 
-  updateMyProfile(payload: Partial<CandidateProfile>): Observable<CandidateProfile> {
-    return this.api.patch<CandidateProfile>('/profile/me/', payload);
+  updateMyProfile(
+    payload: Partial<CandidateProfile>,
+  ): Observable<CandidateProfile> {
+    return this.api.patch<CandidateProfile>("/profile/me/", payload);
   }
 
   getCompletion(): Observable<ProfileCompletion> {
-    return this.api.get<ProfileCompletion>('/profile/me/completion/');
+    return this.api.get<ProfileCompletion>("/profile/me/completion/");
   }
 
   listEducation(): Observable<EducationItem[]> {
-    return this.api.get<EducationItem[]>('/profile/me/education/');
+    return this.api.get<EducationItem[]>("/profile/me/education/");
   }
 
-  addEducation(payload: Omit<EducationItem, 'id' | 'created_at' | 'updated_at'>): Observable<EducationItem> {
-    return this.api.post<EducationItem>('/profile/me/education/', payload);
+  addEducation(
+    payload: Omit<EducationItem, "id" | "created_at" | "updated_at">,
+  ): Observable<EducationItem> {
+    return this.api.post<EducationItem>("/profile/me/education/", payload);
   }
 
   removeEducation(id: string): Observable<void> {
@@ -70,11 +74,15 @@ export class ProfilesService {
   }
 
   listSkills(): Observable<SkillItem[]> {
-    return this.api.get<SkillItem[]>('/profile/me/skills/');
+    return this.api.get<SkillItem[]>("/profile/me/skills/");
   }
 
-  addSkill(payload: { name: string; level: number; years_experience: number }): Observable<SkillItem> {
-    return this.api.post<SkillItem>('/profile/me/skills/', payload);
+  addSkill(payload: {
+    name: string;
+    level: number;
+    years_experience: number;
+  }): Observable<SkillItem> {
+    return this.api.post<SkillItem>("/profile/me/skills/", payload);
   }
 
   removeSkill(id: string): Observable<void> {
@@ -82,14 +90,19 @@ export class ProfilesService {
   }
 
   listDocuments(): Observable<DocumentItem[]> {
-    return this.api.get<DocumentItem[]>('/profile/me/documents/');
+    return this.api.get<DocumentItem[]>("/profile/me/documents/");
   }
 
-  uploadDocument(file: File, kind = 'cv'): Observable<HttpEvent<DocumentItem> | DocumentItem> {
+  uploadDocument(
+    file: File,
+    kind = "cv",
+  ): Observable<HttpEvent<DocumentItem> | DocumentItem> {
     const form = new FormData();
-    form.append('file', file);
-    form.append('kind', kind);
-    return this.api.post<DocumentItem>('/profile/me/documents/', form, { isMultipart: true });
+    form.append("file", file);
+    form.append("kind", kind);
+    return this.api.post<DocumentItem>("/profile/me/documents/", form, {
+      isMultipart: true,
+    });
   }
 
   deleteDocument(id: string): Observable<void> {

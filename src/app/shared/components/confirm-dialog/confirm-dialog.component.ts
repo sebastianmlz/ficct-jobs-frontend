@@ -1,16 +1,23 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+} from "@angular/core";
 
 @Component({
-  selector: 'app-confirm-dialog',
+  selector: "app-confirm-dialog",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './confirm-dialog.component.html',
+  templateUrl: "./confirm-dialog.component.html",
 })
 export class ConfirmDialogComponent {
-  @Input({ required: true }) title = '';
-  @Input() description = '';
-  @Input() confirmLabel = 'Confirmar';
-  @Input() cancelLabel = 'Cancelar';
+  @Input({ required: true }) title = "";
+  @Input() description = "";
+  @Input() confirmLabel = "Confirmar";
+  @Input() cancelLabel = "Cancelar";
   @Input() destructive = false;
   @Output() confirmed = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();

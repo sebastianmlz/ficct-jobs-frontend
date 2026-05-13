@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from "@angular/core";
+import { Observable } from "rxjs";
 
-import { ApiService } from './api.service';
+import { ApiService } from "./api.service";
 
 export interface CompanySummary {
   id: string;
@@ -13,7 +13,7 @@ export interface CompanySummary {
   contact_email: string;
   contact_phone: string;
   description: string;
-  status: 'pending_validation' | 'active' | 'suspended' | 'rejected';
+  status: "pending_validation" | "active" | "suspended" | "rejected";
   validated_at: string | null;
   created_at: string;
   updated_at: string;
@@ -31,36 +31,55 @@ export interface CreateCompanyPayload {
 
 export interface CreateCompanyResponse {
   company: CompanySummary;
-  representative: { id: string; user_id: string; email: string; full_name: string; title: string };
+  representative: {
+    id: string;
+    user_id: string;
+    email: string;
+    full_name: string;
+    title: string;
+  };
   password_reset_email_sent: boolean;
   message?: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class RecruitmentService {
   private readonly api = inject(ApiService);
 
   list(): Observable<CompanySummary[]> {
-    return this.api.get<CompanySummary[]>('/recruitment/companies/');
+    return this.api.get<CompanySummary[]>("/recruitment/companies/");
   }
 
   listPending(): Observable<CompanySummary[]> {
-    return this.api.get<CompanySummary[]>('/recruitment/companies/pending/');
+    return this.api.get<CompanySummary[]>("/recruitment/companies/pending/");
   }
 
   register(payload: CreateCompanyPayload): Observable<CreateCompanyResponse> {
-    return this.api.post<CreateCompanyResponse>('/recruitment/companies/', payload);
+    return this.api.post<CreateCompanyResponse>(
+      "/recruitment/companies/",
+      payload,
+    );
   }
 
-  setStatus(id: string, action: 'suspend' | 'reactivate', reason?: string): Observable<CompanySummary> {
-    return this.api.post<CompanySummary>(`/recruitment/companies/${id}/status/`, { action, reason });
+  setStatus(
+    id: string,
+    action: "suspend" | "reactivate",
+    reason?: string,
+  ): Observable<CompanySummary> {
+    return this.api.post<CompanySummary>(
+      `/recruitment/companies/${id}/status/`,
+      { action, reason },
+    );
   }
 
   validate(
     id: string,
-    action: 'approve' | 'reject',
+    action: "approve" | "reject",
     reason?: string,
   ): Observable<CompanySummary> {
-    return this.api.post<CompanySummary>(`/recruitment/companies/${id}/validate/`, { action, reason });
+    return this.api.post<CompanySummary>(
+      `/recruitment/companies/${id}/validate/`,
+      { action, reason },
+    );
   }
 }

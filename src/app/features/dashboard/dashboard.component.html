@@ -5,39 +5,57 @@
 ></app-page-header>
 
 <div class="grid gap-6 lg:grid-cols-3">
-
   <div class="space-y-6 lg:col-span-2">
-
     @switch (role()) {
-
-      @case ('candidate') {
+      @case ("candidate") {
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
           @for (action of candidateActions; track action.label) {
             <a
               [routerLink]="action.path"
               class="group flex flex-col items-center rounded-xl border border-institution-border bg-white p-4 text-center shadow-card transition-all duration-200 hover:shadow-card-hover hover:border-ficct-200 hover:-translate-y-0.5"
             >
-              <div [class]="'mb-2 flex h-9 w-9 items-center justify-center rounded-lg ' + action.iconBg + ' ' + action.iconColor">
-                <app-icon [name]="action.icon" size="h-5 w-5"/>
+              <div
+                [class]="
+                  'mb-2 flex h-9 w-9 items-center justify-center rounded-lg ' +
+                  action.iconBg +
+                  ' ' +
+                  action.iconColor
+                "
+              >
+                <app-icon [name]="action.icon" size="h-5 w-5" />
               </div>
-              <span class="text-xs font-medium text-institution-text-primary">{{ action.label }}</span>
+              <span class="text-xs font-medium text-institution-text-primary">{{
+                action.label
+              }}</span>
             </a>
           }
         </div>
 
         @if (completion(); as c) {
-          <section class="rounded-xl border border-institution-border bg-white p-5 shadow-card">
+          <section
+            class="rounded-xl border border-institution-border bg-white p-5 shadow-card"
+          >
             <div class="flex items-baseline justify-between">
               <div>
                 <h2 class="heading-h2 text-base">Completitud del perfil</h2>
                 <p class="mt-0.5 text-xs text-institution-text-secondary">
-                  {{ c.completed_sections }} de {{ c.total_sections }} secciones completas
+                  {{ c.completed_sections }} de {{ c.total_sections }} secciones
+                  completas
                 </p>
               </div>
-              <p class="font-display text-2xl font-extrabold text-institution-navy">{{ c.percent }}%</p>
+              <p
+                class="font-display text-2xl font-extrabold text-institution-navy"
+              >
+                {{ c.percent }}%
+              </p>
             </div>
-            <div class="mt-3 h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
-              <div class="h-full bg-ficct-500 transition-all" [style.width.%]="c.percent"></div>
+            <div
+              class="mt-3 h-2.5 w-full rounded-full bg-slate-100 overflow-hidden"
+            >
+              <div
+                class="h-full bg-ficct-500 transition-all"
+                [style.width.%]="c.percent"
+              ></div>
             </div>
             @if (missingSections().length > 0) {
               <div class="mt-3 flex flex-wrap gap-1.5">
@@ -45,9 +63,15 @@
                   <span class="badge-warning">{{ sectionLabel[key] }}</span>
                 }
               </div>
-              <a class="mt-3 inline-block btn-ghost btn-sm" routerLink="/profile">Completar perfil</a>
+              <a
+                class="mt-3 inline-block btn-ghost btn-sm"
+                routerLink="/profile"
+                >Completar perfil</a
+              >
             } @else {
-              <p class="mt-3 text-xs text-emerald-700">Su perfil está completo. ¡Excelente!</p>
+              <p class="mt-3 text-xs text-emerald-700">
+                Su perfil está completo. ¡Excelente!
+              </p>
             }
           </section>
         }
@@ -55,16 +79,20 @@
         <section>
           <div class="section-header">
             <h2 class="heading-h2 text-base">Recomendaciones para usted</h2>
-            <a class="btn-ghost btn-sm" routerLink="/vacancies">Ver todas las vacantes</a>
+            <a class="btn-ghost btn-sm" routerLink="/vacancies"
+              >Ver todas las vacantes</a
+            >
           </div>
           @if (recommendationsBusy()) {
             <div class="space-y-2">
-              @for (i of [1,2,3]; track i) {
+              @for (i of [1, 2, 3]; track i) {
                 <div class="h-16 animate-pulse rounded-lg bg-slate-100"></div>
               }
             </div>
           } @else if (!recommendationsAvailable()) {
-            <div class="rounded-xl border border-dashed border-institution-border bg-white px-4 py-6 text-center text-sm text-institution-text-secondary">
+            <div
+              class="rounded-xl border border-dashed border-institution-border bg-white px-4 py-6 text-center text-sm text-institution-text-secondary"
+            >
               Las recomendaciones de IA no están disponibles temporalmente.
             </div>
           } @else if (recommendations().length === 0) {
@@ -72,19 +100,33 @@
               title="Sin recomendaciones todavía"
               description="Complete su perfil y suba su CV para recibir recomendaciones personalizadas."
             >
-              <a class="btn-primary btn-sm" routerLink="/profile">Mejorar perfil</a>
+              <a class="btn-primary btn-sm" routerLink="/profile"
+                >Mejorar perfil</a
+              >
             </app-empty-state>
           } @else {
             <div class="grid gap-2 sm:grid-cols-2">
               @for (r of recommendations(); track r.vacancy_id) {
-                <a [routerLink]="['/vacancies', r.vacancy_id]"
-                   class="block rounded-lg border border-institution-border bg-white p-3.5 shadow-card hover:shadow-card-hover hover:border-ficct-200">
-                  <p class="font-semibold text-sm text-institution-text-primary line-clamp-1">{{ r.title }}</p>
-                  <p class="mt-0.5 text-xs text-institution-text-secondary line-clamp-1">{{ r.company_name }}</p>
+                <a
+                  [routerLink]="['/vacancies', r.vacancy_id]"
+                  class="block rounded-lg border border-institution-border bg-white p-3.5 shadow-card hover:shadow-card-hover hover:border-ficct-200"
+                >
+                  <p
+                    class="font-semibold text-sm text-institution-text-primary line-clamp-1"
+                  >
+                    {{ r.title }}
+                  </p>
+                  <p
+                    class="mt-0.5 text-xs text-institution-text-secondary line-clamp-1"
+                  >
+                    {{ r.company_name }}
+                  </p>
                   <div class="mt-2 flex items-center gap-2">
                     <span class="badge-info text-xs">{{ r.modality }}</span>
                     @if (r.location) {
-                      <span class="text-xs text-institution-text-secondary">{{ r.location }}</span>
+                      <span class="text-xs text-institution-text-secondary">{{
+                        r.location
+                      }}</span>
                     }
                     @if (r.score !== null && r.score !== undefined) {
                       <span class="ml-auto text-xs font-mono text-ficct-700">
@@ -106,7 +148,7 @@
 
           @if (loading()) {
             <div class="space-y-2">
-              @for (i of [1,2,3]; track i) {
+              @for (i of [1, 2, 3]; track i) {
                 <div class="h-16 animate-pulse rounded-lg bg-slate-100"></div>
               }
             </div>
@@ -115,7 +157,9 @@
               title="Aún no tiene postulaciones"
               description="Explore las vacantes y envíe su primera postulación."
             >
-              <a class="btn-primary btn-sm" routerLink="/vacancies">Ver vacantes</a>
+              <a class="btn-primary btn-sm" routerLink="/vacancies"
+                >Ver vacantes</a
+              >
             </app-empty-state>
           } @else {
             <div class="table-container">
@@ -132,9 +176,17 @@
                   @for (app of applications().slice(0, 5); track app.id) {
                     <tr>
                       <td class="font-medium">{{ app.vacancy_title }}</td>
-                      <td class="text-institution-text-secondary">{{ app.company_name }}</td>
-                      <td><app-stage-badge [value]="app.current_stage"></app-stage-badge></td>
-                      <td class="text-institution-text-secondary">{{ app.applied_at | date: 'dd MMM' }}</td>
+                      <td class="text-institution-text-secondary">
+                        {{ app.company_name }}
+                      </td>
+                      <td>
+                        <app-stage-badge
+                          [value]="app.current_stage"
+                        ></app-stage-badge>
+                      </td>
+                      <td class="text-institution-text-secondary">
+                        {{ app.applied_at | date: "dd MMM" }}
+                      </td>
                     </tr>
                   }
                 </tbody>
@@ -144,17 +196,26 @@
         </section>
       }
 
-      @case ('company_rep') {
+      @case ("company_rep") {
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
           @for (action of repActions; track action.label) {
             <a
               [routerLink]="action.path"
               class="group flex flex-col items-center rounded-xl border border-institution-border bg-white p-4 text-center shadow-card transition-all duration-200 hover:shadow-card-hover hover:border-ficct-200 hover:-translate-y-0.5"
             >
-              <div [class]="'mb-2 flex h-9 w-9 items-center justify-center rounded-lg ' + action.iconBg + ' ' + action.iconColor">
-                <app-icon [name]="action.icon" size="h-5 w-5"/>
+              <div
+                [class]="
+                  'mb-2 flex h-9 w-9 items-center justify-center rounded-lg ' +
+                  action.iconBg +
+                  ' ' +
+                  action.iconColor
+                "
+              >
+                <app-icon [name]="action.icon" size="h-5 w-5" />
               </div>
-              <span class="text-xs font-medium text-institution-text-primary">{{ action.label }}</span>
+              <span class="text-xs font-medium text-institution-text-primary">{{
+                action.label
+              }}</span>
             </a>
           }
         </div>
@@ -162,12 +223,14 @@
         <section>
           <div class="section-header">
             <h2 class="heading-h2 text-base">Mis vacantes recientes</h2>
-            <a class="btn-ghost btn-sm" routerLink="/rep/vacancies">Ver todas</a>
+            <a class="btn-ghost btn-sm" routerLink="/rep/vacancies"
+              >Ver todas</a
+            >
           </div>
 
           @if (loading()) {
             <div class="space-y-2">
-              @for (i of [1,2,3]; track i) {
+              @for (i of [1, 2, 3]; track i) {
                 <div class="h-16 animate-pulse rounded-lg bg-slate-100"></div>
               }
             </div>
@@ -176,7 +239,9 @@
               title="Aún no ha publicado vacantes"
               description="Publique su primera vacante para comenzar a recibir candidatos calificados."
             >
-              <a class="btn-primary btn-sm" routerLink="/rep/vacancies/new">Nueva vacante</a>
+              <a class="btn-primary btn-sm" routerLink="/rep/vacancies/new"
+                >Nueva vacante</a
+              >
             </app-empty-state>
           } @else {
             <div class="table-container">
@@ -193,11 +258,17 @@
                   @for (v of vacancies().slice(0, 5); track v.id) {
                     <tr>
                       <td class="font-medium">{{ v.title }}</td>
-                      <td class="text-institution-text-secondary">{{ v.modality }}</td>
-                      <td>
-                        <span [class]="vacancyStatusClass(v.status)">{{ vacancyStatus(v.status) }}</span>
+                      <td class="text-institution-text-secondary">
+                        {{ v.modality }}
                       </td>
-                      <td class="text-institution-text-secondary">{{ v.created_at | date: 'dd MMM' }}</td>
+                      <td>
+                        <span [class]="vacancyStatusClass(v.status)">{{
+                          vacancyStatus(v.status)
+                        }}</span>
+                      </td>
+                      <td class="text-institution-text-secondary">
+                        {{ v.created_at | date: "dd MMM" }}
+                      </td>
                     </tr>
                   }
                 </tbody>
@@ -207,37 +278,63 @@
         </section>
       }
 
-      @case ('admin_ficct') {
+      @case ("admin_ficct") {
         <section>
-          <h2 class="heading-h2 text-base mb-4">Centro de control institucional</h2>
-          <p class="mb-5 text-sm text-institution-text-secondary">Valide cuentas, apruebe vacantes, monitoree métricas y genere exportaciones.</p>
+          <h2 class="heading-h2 text-base mb-4">
+            Centro de control institucional
+          </h2>
+          <p class="mb-5 text-sm text-institution-text-secondary">
+            Valide cuentas, apruebe vacantes, monitoree métricas y genere
+            exportaciones.
+          </p>
           <div class="grid gap-3 sm:grid-cols-2">
             @for (action of adminActions; track action.label) {
               <a
                 [routerLink]="action.path"
                 class="flex items-center gap-4 rounded-xl border border-institution-border bg-white p-5 shadow-card transition-all duration-200 hover:shadow-card-hover hover:border-ficct-200"
               >
-                <div [class]="'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ' + action.iconBg + ' ' + action.iconColor">
-                  <app-icon [name]="action.icon" size="h-5 w-5"/>
+                <div
+                  [class]="
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ' +
+                    action.iconBg +
+                    ' ' +
+                    action.iconColor
+                  "
+                >
+                  <app-icon [name]="action.icon" size="h-5 w-5" />
                 </div>
                 <div>
-                  <p class="font-semibold text-institution-text-primary text-sm">{{ action.label }}</p>
-                  <p class="text-xs text-institution-text-secondary">{{ action.description }}</p>
+                  <p
+                    class="font-semibold text-institution-text-primary text-sm"
+                  >
+                    {{ action.label }}
+                  </p>
+                  <p class="text-xs text-institution-text-secondary">
+                    {{ action.description }}
+                  </p>
                 </div>
-                <svg class="ml-auto h-4 w-4 shrink-0 text-institution-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                <svg
+                  class="ml-auto h-4 w-4 shrink-0 text-institution-text-secondary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </a>
             }
           </div>
         </section>
       }
-
     }
   </div>
 
   <aside class="space-y-6">
-
     <section>
       <div class="section-header">
         <h2 class="heading-h2 text-base">Notificaciones</h2>
@@ -245,19 +342,35 @@
       </div>
 
       @if (notifications().length === 0) {
-        <div class="rounded-xl border border-dashed border-institution-border bg-white px-4 py-8 text-center">
-          <p class="text-sm text-institution-text-secondary">Por ahora no hay novedades.</p>
+        <div
+          class="rounded-xl border border-dashed border-institution-border bg-white px-4 py-8 text-center"
+        >
+          <p class="text-sm text-institution-text-secondary">
+            Por ahora no hay novedades.
+          </p>
         </div>
       } @else {
         <div class="space-y-2">
           @for (n of notifications().slice(0, 5); track n.id) {
-            <div class="rounded-lg border border-institution-border bg-white p-3.5 shadow-card">
+            <div
+              class="rounded-lg border border-institution-border bg-white p-3.5 shadow-card"
+            >
               <div class="flex items-start gap-2.5">
-                <span [class]="'status-dot mt-1.5 ' + notifDotClass(n.kind)"></span>
+                <span
+                  [class]="'status-dot mt-1.5 ' + notifDotClass(n.kind)"
+                ></span>
                 <div class="min-w-0 flex-1">
-                  <p class="text-sm font-medium text-institution-text-primary line-clamp-1">{{ n.title }}</p>
+                  <p
+                    class="text-sm font-medium text-institution-text-primary line-clamp-1"
+                  >
+                    {{ n.title }}
+                  </p>
                   @if (n.body) {
-                    <p class="mt-0.5 text-xs text-institution-text-secondary line-clamp-2">{{ n.body }}</p>
+                    <p
+                      class="mt-0.5 text-xs text-institution-text-secondary line-clamp-2"
+                    >
+                      {{ n.body }}
+                    </p>
                   }
                 </div>
               </div>
@@ -267,20 +380,29 @@
       }
     </section>
 
-    @if (role() === 'candidate') {
-      <div class="rounded-xl border border-institution-border bg-white p-5 shadow-card">
+    @if (role() === "candidate") {
+      <div
+        class="rounded-xl border border-institution-border bg-white p-5 shadow-card"
+      >
         <div class="flex items-center gap-3 mb-4">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-ficct-100 text-sm font-bold text-ficct-700">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-ficct-100 text-sm font-bold text-ficct-700"
+          >
             {{ firstName().charAt(0).toUpperCase() }}
           </div>
           <div>
-            <p class="font-semibold text-sm text-institution-text-primary">{{ user()?.full_name }}</p>
+            <p class="font-semibold text-sm text-institution-text-primary">
+              {{ user()?.full_name }}
+            </p>
             <p class="text-xs text-institution-text-secondary">Candidato</p>
           </div>
         </div>
-        <a class="btn-secondary btn-sm w-full justify-center" routerLink="/profile">Editar perfil</a>
+        <a
+          class="btn-secondary btn-sm w-full justify-center"
+          routerLink="/profile"
+          >Editar perfil</a
+        >
       </div>
     }
-
   </aside>
 </div>

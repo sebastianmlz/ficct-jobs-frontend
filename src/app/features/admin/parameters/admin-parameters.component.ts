@@ -1,26 +1,46 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+} from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 
-import { AdminService, SystemParameter } from '../../../core/services/admin.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import {
+  AdminService,
+  SystemParameter,
+} from "../../../core/services/admin.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
-  selector: 'app-admin-parameters',
+  selector: "app-admin-parameters",
   standalone: true,
   imports: [ReactiveFormsModule, PageHeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './admin-parameters.component.html',
+  templateUrl: "./admin-parameters.component.html",
 })
 export class AdminParametersComponent implements OnInit {
   private readonly admin = inject(AdminService);
   private readonly toast = inject(ToastService);
 
   protected readonly form = new FormGroup({
-    key: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(1)] }),
-    value: new FormControl('', { nonNullable: true }),
-    value_type: new FormControl<'string' | 'int' | 'float' | 'bool' | 'json'>('string', { nonNullable: true }),
-    description: new FormControl('', { nonNullable: true }),
+    key: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1)],
+    }),
+    value: new FormControl("", { nonNullable: true }),
+    value_type: new FormControl<"string" | "int" | "float" | "bool" | "json">(
+      "string",
+      { nonNullable: true },
+    ),
+    description: new FormControl("", { nonNullable: true }),
   });
 
   private readonly itemsSignal = signal<SystemParameter[]>([]);
@@ -57,12 +77,15 @@ export class AdminParametersComponent implements OnInit {
       .subscribe({
         next: () => {
           this.busySignal.set(false);
-          this.toast.success('Parámetro guardado');
+          this.toast.success("Parámetro guardado");
           this.refresh();
         },
         error: (err) => {
           this.busySignal.set(false);
-          this.toast.danger('No se pudo guardar', err?.error?.error?.message ?? '');
+          this.toast.danger(
+            "No se pudo guardar",
+            err?.error?.error?.message ?? "",
+          );
         },
       });
   }
@@ -70,7 +93,7 @@ export class AdminParametersComponent implements OnInit {
   private refresh(): void {
     this.admin.parameters().subscribe({
       next: (items) => this.itemsSignal.set(items),
-      error: () => this.toast.danger('No se pudieron cargar los parámetros'),
+      error: () => this.toast.danger("No se pudieron cargar los parámetros"),
     });
   }
 }

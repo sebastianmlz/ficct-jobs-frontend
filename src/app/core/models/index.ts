@@ -1,6 +1,6 @@
-export type Role = 'candidate' | 'company_rep' | 'admin_ficct';
+export type Role = "candidate" | "company_rep" | "admin_ficct";
 
-export type AccountStatus = 'pending_verification' | 'active' | 'suspended';
+export type AccountStatus = "pending_verification" | "active" | "suspended";
 
 export interface User {
   id: string;
@@ -45,8 +45,13 @@ export interface CandidateProfile {
   updated_at: string;
 }
 
-export type DocumentKind = 'cv' | 'certificate' | 'other';
-export type DocumentIngestStatus = 'pending' | 'ingesting' | 'ingested' | 'failed' | 'deleted';
+export type DocumentKind = "cv" | "certificate" | "other";
+export type DocumentIngestStatus =
+  | "pending"
+  | "ingesting"
+  | "ingested"
+  | "failed"
+  | "deleted";
 
 export interface DocumentItem {
   id: string;
@@ -63,8 +68,13 @@ export interface DocumentItem {
   updated_at: string;
 }
 
-export type VacancyStatus = 'draft' | 'pending_review' | 'active' | 'rejected' | 'closed';
-export type WorkModality = 'onsite' | 'remote' | 'hybrid';
+export type VacancyStatus =
+  | "draft"
+  | "pending_review"
+  | "active"
+  | "rejected"
+  | "closed";
+export type WorkModality = "onsite" | "remote" | "hybrid";
 
 export interface Vacancy {
   id: string;
@@ -89,14 +99,14 @@ export interface Vacancy {
 }
 
 export type StageCode =
-  | 'received'
-  | 'preselected'
-  | 'interview_scheduled'
-  | 'interview_done'
-  | 'offer'
-  | 'hired'
-  | 'rejected'
-  | 'withdrawn';
+  | "received"
+  | "preselected"
+  | "interview_scheduled"
+  | "interview_done"
+  | "offer"
+  | "hired"
+  | "rejected"
+  | "withdrawn";
 
 export interface ApplicationItem {
   id: string;
@@ -114,7 +124,7 @@ export interface ApplicationItem {
 
 export interface NotificationItem {
   id: string;
-  kind: 'info' | 'success' | 'warning' | 'error';
+  kind: "info" | "success" | "warning" | "error";
   title: string;
   body: string;
   read_at: string | null;
@@ -127,7 +137,13 @@ export interface SearchHit {
   vacancy_id: string;
   score: number | null;
   snippet: string;
-  vacancy: { id: string; title: string; company_name: string; modality: string; location: string } | null;
+  vacancy: {
+    id: string;
+    title: string;
+    company_name: string;
+    modality: string;
+    location: string;
+  } | null;
 }
 
 export interface SearchResult {

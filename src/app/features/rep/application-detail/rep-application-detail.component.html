@@ -2,15 +2,27 @@
   <app-page-header
     [eyebrow]="a.company_name"
     [title]="a.vacancy_title"
-    [description]="'Postulado ' + (a.applied_at | date:'mediumDate')"
+    [description]="'Postulado ' + (a.applied_at | date: 'mediumDate')"
   >
     <div class="mt-4 flex flex-wrap items-center gap-2">
-      <a class="btn-ghost btn-sm" [routerLink]="['/rep/vacancies', a.vacancy_id, 'applicants']">←</a>
+      <a
+        class="btn-ghost btn-sm"
+        [routerLink]="['/rep/vacancies', a.vacancy_id, 'applicants']"
+        >←</a
+      >
       <app-stage-badge [value]="a.current_stage"></app-stage-badge>
-      <button class="btn-secondary btn-sm" type="button" (click)="openAffinityModal()">
+      <button
+        class="btn-secondary btn-sm"
+        type="button"
+        (click)="openAffinityModal()"
+      >
         Ver detalle de afinidad
       </button>
-      <button class="btn-secondary btn-sm" type="button" (click)="openNotifyModal()">
+      <button
+        class="btn-secondary btn-sm"
+        type="button"
+        (click)="openNotifyModal()"
+      >
         Enviar notificación
       </button>
     </div>
@@ -18,27 +30,44 @@
 
   <div class="grid gap-6 lg:grid-cols-3">
     <section class="lg:col-span-2 space-y-5">
-      <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
-        <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <div
+        class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+      >
+        <div
+          class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+        >
           <h2 class="heading-h2 text-sm">Carta de presentación</h2>
         </div>
         <div class="p-5">
-          <p class="whitespace-pre-line text-sm leading-relaxed text-institution-text-primary">
-            {{ a.cover_letter || 'No incluyó carta de presentación.' }}
+          <p
+            class="whitespace-pre-line text-sm leading-relaxed text-institution-text-primary"
+          >
+            {{ a.cover_letter || "No incluyó carta de presentación." }}
           </p>
         </div>
       </div>
 
-      <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
-        <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <div
+        class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+      >
+        <div
+          class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+        >
           <h2 class="heading-h2 text-sm">Historial de etapas</h2>
         </div>
         <div class="p-5">
-          <ol class="relative border-l border-institution-border/60 pl-5 space-y-3">
+          <ol
+            class="relative border-l border-institution-border/60 pl-5 space-y-3"
+          >
             @for (h of a.history; track h.at) {
               <li class="flex items-center justify-between gap-4">
-                <span class="text-sm font-medium text-institution-text-primary">{{ stageLabel(h.stage) }}</span>
-                <span class="text-xs text-institution-text-secondary">{{ h.at | date:'dd MMM, HH:mm' }}</span>
+                <span
+                  class="text-sm font-medium text-institution-text-primary"
+                  >{{ stageLabel(h.stage) }}</span
+                >
+                <span class="text-xs text-institution-text-secondary">{{
+                  h.at | date: "dd MMM, HH:mm"
+                }}</span>
               </li>
             }
           </ol>
@@ -47,14 +76,23 @@
     </section>
 
     <aside class="space-y-5">
-      <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
-        <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <div
+        class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+      >
+        <div
+          class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+        >
           <h2 class="heading-h2 text-sm">Mover a etapa</h2>
         </div>
         <div class="p-4">
           <div class="flex flex-wrap gap-2">
             @for (s of stages; track s) {
-              <button class="btn-secondary btn-sm" type="button" (click)="moveTo(s)" [disabled]="busy()">
+              <button
+                class="btn-secondary btn-sm"
+                type="button"
+                (click)="moveTo(s)"
+                [disabled]="busy()"
+              >
                 {{ stageLabel(s) }}
               </button>
             }
@@ -62,33 +100,73 @@
         </div>
       </div>
 
-      <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
-        <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+      <div
+        class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+      >
+        <div
+          class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+        >
           <h2 class="heading-h2 text-sm">Entrevistas</h2>
         </div>
         <div class="p-4 space-y-3">
-          <form class="space-y-2" [formGroup]="interviewForm" (ngSubmit)="schedule()">
+          <form
+            class="space-y-2"
+            [formGroup]="interviewForm"
+            (ngSubmit)="schedule()"
+          >
             <div>
-              <label class="label-base" for="interview-scheduled-at">Fecha y hora</label>
-              <input id="interview-scheduled-at" class="input-base" type="datetime-local" formControlName="scheduled_at" />
+              <label class="label-base" for="interview-scheduled-at"
+                >Fecha y hora</label
+              >
+              <input
+                id="interview-scheduled-at"
+                class="input-base"
+                type="datetime-local"
+                formControlName="scheduled_at"
+              />
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="label-base" for="interview-modality">Modalidad</label>
-                <select id="interview-modality" class="input-base" formControlName="modality">
+                <label class="label-base" for="interview-modality"
+                  >Modalidad</label
+                >
+                <select
+                  id="interview-modality"
+                  class="input-base"
+                  formControlName="modality"
+                >
                   <option value="remote">Remoto</option>
                   <option value="onsite">Presencial</option>
                   <option value="phone">Teléfono</option>
                 </select>
               </div>
               <div>
-                <label class="label-base" for="interview-duration">Duración en minutos</label>
-                <input id="interview-duration" class="input-base" type="number" formControlName="duration_minutes" />
+                <label class="label-base" for="interview-duration"
+                  >Duración en minutos</label
+                >
+                <input
+                  id="interview-duration"
+                  class="input-base"
+                  type="number"
+                  formControlName="duration_minutes"
+                />
               </div>
             </div>
-            <input class="input-base" formControlName="location_or_link" placeholder="Enlace o dirección" />
-            <textarea class="input-base h-16" formControlName="notes" placeholder="Notas (opcional)"></textarea>
-            <button class="btn-primary btn-sm w-full" type="submit" [disabled]="interviewForm.invalid || busy()">
+            <input
+              class="input-base"
+              formControlName="location_or_link"
+              placeholder="Enlace o dirección"
+            />
+            <textarea
+              class="input-base h-16"
+              formControlName="notes"
+              placeholder="Notas (opcional)"
+            ></textarea>
+            <button
+              class="btn-primary btn-sm w-full"
+              type="submit"
+              [disabled]="interviewForm.invalid || busy()"
+            >
               Agendar entrevista
             </button>
           </form>
@@ -99,21 +177,39 @@
                 <div class="rounded-lg border border-institution-border p-3">
                   <div class="flex items-start justify-between gap-2">
                     <div>
-                      <p class="text-sm font-medium text-institution-text-primary">{{ it.scheduled_at | date:'dd MMM, HH:mm' }}</p>
+                      <p
+                        class="text-sm font-medium text-institution-text-primary"
+                      >
+                        {{ it.scheduled_at | date: "dd MMM, HH:mm" }}
+                      </p>
                       <p class="mt-0.5 text-xs text-institution-text-secondary">
                         {{ it.modality }} · {{ it.duration_minutes }} min
                       </p>
-                      <span class="mt-1 inline-block badge-neutral text-xs">{{ interviewStatusLabel(it.status) }}</span>
+                      <span class="mt-1 inline-block badge-neutral text-xs">{{
+                        interviewStatusLabel(it.status)
+                      }}</span>
                       @if (it.location_or_link) {
-                        <p class="mt-1 text-xs text-institution-text-secondary break-all">{{ it.location_or_link }}</p>
+                        <p
+                          class="mt-1 text-xs text-institution-text-secondary break-all"
+                        >
+                          {{ it.location_or_link }}
+                        </p>
                       }
                     </div>
-                    @if (it.status === 'scheduled') {
+                    @if (it.status === "scheduled") {
                       <div class="flex flex-col gap-1 shrink-0">
-                        <button class="btn-secondary btn-sm" type="button" (click)="completeInterview(it.id)">
+                        <button
+                          class="btn-secondary btn-sm"
+                          type="button"
+                          (click)="completeInterview(it.id)"
+                        >
                           Marcar realizada
                         </button>
-                        <button class="btn-ghost btn-sm" type="button" (click)="cancelInterview(it.id)">
+                        <button
+                          class="btn-ghost btn-sm"
+                          type="button"
+                          (click)="cancelInterview(it.id)"
+                        >
                           Cancelar
                         </button>
                       </div>
@@ -129,19 +225,34 @@
   </div>
 } @else {
   <div class="space-y-3">
-    @for (i of [1,2]; track i) {
-      <div class="h-32 animate-pulse rounded-xl border border-institution-border bg-white"></div>
+    @for (i of [1, 2]; track i) {
+      <div
+        class="h-32 animate-pulse rounded-xl border border-institution-border bg-white"
+      ></div>
     }
   </div>
 }
 
 @if (notifyOpen()) {
-  <div class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" (click)="closeNotifyModal()">
-    <div class="w-full max-w-md rounded-xl bg-white shadow-xl" (click)="$event.stopPropagation()">
-      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+  <div
+    class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4"
+    (click)="closeNotifyModal()"
+  >
+    <div
+      class="w-full max-w-md rounded-xl bg-white shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+      >
         <h2 class="heading-h2 text-sm">Enviar notificación al candidato</h2>
       </div>
-      <form class="p-5 space-y-3" [formGroup]="notifyForm" (ngSubmit)="sendNotification()" novalidate>
+      <form
+        class="p-5 space-y-3"
+        [formGroup]="notifyForm"
+        (ngSubmit)="sendNotification()"
+        novalidate
+      >
         <div>
           <label class="label-base" for="notify-kind">Tipo</label>
           <select id="notify-kind" class="input-base" formControlName="kind">
@@ -152,16 +263,37 @@
         </div>
         <div>
           <label class="label-base" for="notify-title">Asunto</label>
-          <input id="notify-title" class="input-base" formControlName="title" maxlength="200" />
+          <input
+            id="notify-title"
+            class="input-base"
+            formControlName="title"
+            maxlength="200"
+          />
         </div>
         <div>
           <label class="label-base" for="notify-body">Mensaje</label>
-          <textarea id="notify-body" class="input-base h-32" formControlName="body" maxlength="4000" placeholder="Escriba su mensaje al candidato (opcional)"></textarea>
+          <textarea
+            id="notify-body"
+            class="input-base h-32"
+            formControlName="body"
+            maxlength="4000"
+            placeholder="Escriba su mensaje al candidato (opcional)"
+          ></textarea>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button class="btn-ghost btn-sm" type="button" (click)="closeNotifyModal()">Cancelar</button>
-          <button class="btn-primary btn-sm" type="submit" [disabled]="notifyForm.invalid || busy()">
-            {{ busy() ? 'Enviando…' : 'Enviar' }}
+          <button
+            class="btn-ghost btn-sm"
+            type="button"
+            (click)="closeNotifyModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            class="btn-primary btn-sm"
+            type="submit"
+            [disabled]="notifyForm.invalid || busy()"
+          >
+            {{ busy() ? "Enviando…" : "Enviar" }}
           </button>
         </div>
       </form>
@@ -170,16 +302,30 @@
 }
 
 @if (affinityOpen()) {
-  <div class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" (click)="closeAffinityModal()">
-    <div class="w-full max-w-2xl rounded-xl bg-white shadow-xl" (click)="$event.stopPropagation()">
-      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5 flex items-center justify-between">
+  <div
+    class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4"
+    (click)="closeAffinityModal()"
+  >
+    <div
+      class="w-full max-w-2xl rounded-xl bg-white shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="border-b border-institution-border bg-institution-surface px-5 py-3.5 flex items-center justify-between"
+      >
         <h2 class="heading-h2 text-sm">Detalle de afinidad</h2>
-        <button class="btn-ghost btn-sm" type="button" (click)="closeAffinityModal()">Cerrar</button>
+        <button
+          class="btn-ghost btn-sm"
+          type="button"
+          (click)="closeAffinityModal()"
+        >
+          Cerrar
+        </button>
       </div>
       <div class="p-5">
         @if (affinityBusy()) {
           <div class="space-y-3">
-            @for (i of [1,2,3]; track i) {
+            @for (i of [1, 2, 3]; track i) {
               <div class="h-6 w-full animate-pulse rounded bg-slate-100"></div>
             }
             <div class="h-32 w-full animate-pulse rounded bg-slate-100"></div>
@@ -189,20 +335,45 @@
         } @else {
           @if (affinity(); as d) {
             <div class="mb-4">
-              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary">Candidato</p>
-              <p class="font-display text-base font-semibold text-institution-navy">{{ d.candidate.name || d.candidate.email }}</p>
-              <p class="text-xs text-institution-text-secondary">{{ d.candidate.email }}</p>
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary"
+              >
+                Candidato
+              </p>
+              <p
+                class="font-display text-base font-semibold text-institution-navy"
+              >
+                {{ d.candidate.name || d.candidate.email }}
+              </p>
+              <p class="text-xs text-institution-text-secondary">
+                {{ d.candidate.email }}
+              </p>
             </div>
             <div class="mb-4">
-              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary">Cobertura</p>
-              <div class="mt-1.5 h-3 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div class="h-full bg-ficct-500" [style.width.%]="coveragePercent()"></div>
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary"
+              >
+                Cobertura
+              </p>
+              <div
+                class="mt-1.5 h-3 w-full rounded-full bg-slate-100 overflow-hidden"
+              >
+                <div
+                  class="h-full bg-ficct-500"
+                  [style.width.%]="coveragePercent()"
+                ></div>
               </div>
-              <p class="mt-1 text-xs text-institution-text-secondary">{{ coveragePercent() }}% del perfil cumple con los requisitos</p>
+              <p class="mt-1 text-xs text-institution-text-secondary">
+                {{ coveragePercent() }}% del perfil cumple con los requisitos
+              </p>
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.12em] text-emerald-700">Habilidades coincidentes</p>
+                <p
+                  class="text-xs font-semibold uppercase tracking-[0.12em] text-emerald-700"
+                >
+                  Habilidades coincidentes
+                </p>
                 @if (d.matched_skills.length) {
                   <div class="mt-1.5 flex flex-wrap gap-1.5">
                     @for (s of d.matched_skills; track s) {
@@ -210,11 +381,17 @@
                     }
                   </div>
                 } @else {
-                  <p class="mt-1 text-xs text-institution-text-secondary">Sin coincidencias.</p>
+                  <p class="mt-1 text-xs text-institution-text-secondary">
+                    Sin coincidencias.
+                  </p>
                 }
               </div>
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">Habilidades faltantes</p>
+                <p
+                  class="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700"
+                >
+                  Habilidades faltantes
+                </p>
                 @if (d.missing_skills.length) {
                   <div class="mt-1.5 flex flex-wrap gap-1.5">
                     @for (s of d.missing_skills; track s) {
@@ -222,13 +399,23 @@
                     }
                   </div>
                 } @else {
-                  <p class="mt-1 text-xs text-institution-text-secondary">No faltan requisitos.</p>
+                  <p class="mt-1 text-xs text-institution-text-secondary">
+                    No faltan requisitos.
+                  </p>
                 }
               </div>
             </div>
             <div class="mt-5">
-              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary">Análisis cualitativo</p>
-              <p class="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-institution-text-primary">{{ d.narrative }}</p>
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.12em] text-institution-text-secondary"
+              >
+                Análisis cualitativo
+              </p>
+              <p
+                class="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-institution-text-primary"
+              >
+                {{ d.narrative }}
+              </p>
             </div>
           }
         }

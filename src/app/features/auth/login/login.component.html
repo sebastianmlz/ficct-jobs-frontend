@@ -1,25 +1,48 @@
 <div class="flex min-h-screen bg-institution-surface">
-
-  <div class="hidden lg:flex lg:w-[420px] lg:shrink-0 lg:flex-col lg:justify-between bg-institution-navy px-10 py-10">
+  <div
+    class="hidden lg:flex lg:w-[420px] lg:shrink-0 lg:flex-col lg:justify-between bg-institution-navy px-10 py-10"
+  >
     <div>
       <a class="flex items-center gap-2.5" routerLink="/">
-        <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-ficct-500 font-display text-sm font-bold text-white">FJ</span>
+        <span
+          class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-ficct-500 font-display text-sm font-bold text-white"
+          >FJ</span
+        >
         <div class="flex flex-col leading-none">
-          <span class="font-display text-base font-bold tracking-tight text-white">FICCT Jobs</span>
-          <span class="text-[10px] font-semibold uppercase tracking-widest text-ficct-300">UAGRM</span>
+          <span
+            class="font-display text-base font-bold tracking-tight text-white"
+            >FICCT Jobs</span
+          >
+          <span
+            class="text-[10px] font-semibold uppercase tracking-widest text-ficct-300"
+            >UAGRM</span
+          >
         </div>
       </a>
     </div>
     <div class="space-y-5">
-      <blockquote class="border-l-2 border-ficct-400 pl-4 text-sm leading-relaxed text-white/70">
-        "La plataforma que conecta al talento FICCT con las oportunidades correctas."
+      <blockquote
+        class="border-l-2 border-ficct-400 pl-4 text-sm leading-relaxed text-white/70"
+      >
+        "La plataforma que conecta al talento FICCT con las oportunidades
+        correctas."
       </blockquote>
       <div class="space-y-3">
         @for (feature of sideFeatures; track feature.text) {
           <div class="flex items-start gap-3">
-            <div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ficct-500/30">
-              <svg class="h-3 w-3 text-ficct-300" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            <div
+              class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ficct-500/30"
+            >
+              <svg
+                class="h-3 w-3 text-ficct-300"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </div>
             <span class="text-sm text-white/60">{{ feature.text }}</span>
@@ -32,21 +55,34 @@
 
   <div class="flex flex-1 items-center justify-center px-4 py-12">
     <div class="w-full max-w-[400px]">
-
       <div class="mb-8 flex items-center gap-2 lg:hidden">
-        <span class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-ficct-500 font-display text-xs font-bold text-white">FJ</span>
-        <span class="font-display text-sm font-bold text-institution-navy">FICCT Jobs</span>
+        <span
+          class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-ficct-500 font-display text-xs font-bold text-white"
+          >FJ</span
+        >
+        <span class="font-display text-sm font-bold text-institution-navy"
+          >FICCT Jobs</span
+        >
       </div>
 
       <div>
         <p class="heading-eyebrow">FICCT Jobs</p>
-        <h1 class="mt-2 font-display text-2xl font-bold tracking-tight text-institution-navy">
+        <h1
+          class="mt-2 font-display text-2xl font-bold tracking-tight text-institution-navy"
+        >
           Iniciar sesión
         </h1>
-        <p class="mt-1 text-sm text-institution-text-secondary">Use su correo institucional o corporativo.</p>
+        <p class="mt-1 text-sm text-institution-text-secondary">
+          Use su correo institucional o corporativo.
+        </p>
       </div>
 
-      <form class="mt-7 space-y-4" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <form
+        class="mt-7 space-y-4"
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        novalidate
+      >
         <div>
           <label class="label-base" for="login-email">Correo electrónico</label>
           <input
@@ -61,8 +97,13 @@
 
         <div>
           <div class="mb-1.5 flex items-center justify-between">
-            <label class="label-base mb-0" for="login-password">Contraseña</label>
-            <a class="text-xs font-medium text-ficct-600 hover:text-ficct-700" routerLink="/auth/forgot-password">
+            <label class="label-base mb-0" for="login-password"
+              >Contraseña</label
+            >
+            <a
+              class="text-xs font-medium text-ficct-600 hover:text-ficct-700"
+              routerLink="/auth/forgot-password"
+            >
               ¿Olvidó su contraseña?
             </a>
           </div>
@@ -77,18 +118,43 @@
 
         @if (errorMessage()) {
           <div class="alert-danger flex items-start gap-2">
-            <svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <svg
+              class="mt-0.5 h-4 w-4 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <span>{{ errorMessage() }}</span>
           </div>
         }
 
-        <button class="btn-primary w-full" type="submit" [disabled]="busy() || form.invalid">
+        <button
+          class="btn-primary w-full"
+          type="submit"
+          [disabled]="busy() || form.invalid"
+        >
           @if (busy()) {
             <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
             Ingresando…
           } @else {
@@ -99,12 +165,13 @@
 
       <p class="mt-6 text-center text-sm text-institution-text-secondary">
         ¿No tiene una cuenta?
-        <a class="ml-1 font-semibold text-ficct-600 hover:text-ficct-700" routerLink="/auth/register">
+        <a
+          class="ml-1 font-semibold text-ficct-600 hover:text-ficct-700"
+          routerLink="/auth/register"
+        >
           Crear cuenta
         </a>
       </p>
-
     </div>
   </div>
-
 </div>

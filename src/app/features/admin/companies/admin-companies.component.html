@@ -5,8 +5,15 @@
 ></app-page-header>
 
 <section class="grid gap-6 lg:grid-cols-5">
-  <form class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-2" [formGroup]="form" (ngSubmit)="register()" novalidate>
-    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+  <form
+    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-2"
+    [formGroup]="form"
+    (ngSubmit)="register()"
+    novalidate
+  >
+    <div
+      class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+    >
       <h2 class="heading-h2 text-sm">Registrar empresa</h2>
     </div>
     <div class="p-5 space-y-3">
@@ -20,43 +27,93 @@
       </div>
       <div>
         <label class="label-base" for="c-contact">Correo de contacto</label>
-        <input id="c-contact" type="email" class="input-base" formControlName="contact_email" />
+        <input
+          id="c-contact"
+          type="email"
+          class="input-base"
+          formControlName="contact_email"
+        />
       </div>
       <div>
-        <label class="label-base" for="c-rep-email">Correo del representante</label>
-        <input id="c-rep-email" type="email" class="input-base" formControlName="rep_email" />
+        <label class="label-base" for="c-rep-email"
+          >Correo del representante</label
+        >
+        <input
+          id="c-rep-email"
+          type="email"
+          class="input-base"
+          formControlName="rep_email"
+        />
       </div>
       <div>
-        <label class="label-base" for="c-rep-name">Nombre del representante</label>
-        <input id="c-rep-name" class="input-base" formControlName="rep_full_name" />
+        <label class="label-base" for="c-rep-name"
+          >Nombre del representante</label
+        >
+        <input
+          id="c-rep-name"
+          class="input-base"
+          formControlName="rep_full_name"
+        />
       </div>
-      <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-        El alta queda en estado <b>pendiente</b>. Use la sección "Por validar" para aprobar o rechazar; recién entonces el representante recibirá el enlace para fijar su contraseña.
+      <div
+        class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800"
+      >
+        El alta queda en estado <b>pendiente</b>. Use la sección "Por validar"
+        para aprobar o rechazar; recién entonces el representante recibirá el
+        enlace para fijar su contraseña.
       </div>
-      <button class="btn-primary w-full" type="submit" [disabled]="form.invalid || busy()">
+      <button
+        class="btn-primary w-full"
+        type="submit"
+        [disabled]="form.invalid || busy()"
+      >
         @if (busy()) {
-          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            />
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
+          </svg>
         }
-        {{ busy() ? 'Cargando…' : 'Registrar' }}
+        {{ busy() ? "Cargando…" : "Registrar" }}
       </button>
     </div>
   </form>
 
   <div class="lg:col-span-3 space-y-5">
-    <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
-      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+    <div
+      class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+    >
+      <div
+        class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+      >
         <h2 class="heading-h2 text-sm">Por validar</h2>
-        <p class="text-xs text-institution-text-secondary">Empresas pendientes de aprobación.</p>
+        <p class="text-xs text-institution-text-secondary">
+          Empresas pendientes de aprobación.
+        </p>
       </div>
       <div class="p-5">
         @if (pendingLoading()) {
           <div class="space-y-3">
-            @for (i of [1,2]; track i) {
-              <div class="h-14 animate-pulse rounded-lg border border-institution-border bg-institution-surface"></div>
+            @for (i of [1, 2]; track i) {
+              <div
+                class="h-14 animate-pulse rounded-lg border border-institution-border bg-institution-surface"
+              ></div>
             }
           </div>
         } @else if (pending().length === 0) {
-          <p class="text-xs text-institution-text-secondary">No hay empresas pendientes de validación.</p>
+          <p class="text-xs text-institution-text-secondary">
+            No hay empresas pendientes de validación.
+          </p>
         } @else {
           <div class="table-container">
             <table class="table-base">
@@ -71,16 +128,32 @@
                 @for (c of pending(); track c.id) {
                   <tr>
                     <td>
-                      <p class="font-semibold text-institution-text-primary">{{ c.legal_name }}</p>
-                      <p class="text-xs text-institution-text-secondary">{{ c.sector || '—' }} · {{ c.contact_email }}</p>
+                      <p class="font-semibold text-institution-text-primary">
+                        {{ c.legal_name }}
+                      </p>
+                      <p class="text-xs text-institution-text-secondary">
+                        {{ c.sector || "—" }} · {{ c.contact_email }}
+                      </p>
                     </td>
-                    <td class="text-xs text-institution-text-secondary">{{ c.created_at | date:'dd MMM yyyy' }}</td>
+                    <td class="text-xs text-institution-text-secondary">
+                      {{ c.created_at | date: "dd MMM yyyy" }}
+                    </td>
                     <td>
                       <div class="flex justify-end gap-1.5">
-                        <button class="btn-primary btn-sm" type="button" (click)="approveCompany(c)" [disabled]="busyId() === c.id">
+                        <button
+                          class="btn-primary btn-sm"
+                          type="button"
+                          (click)="approveCompany(c)"
+                          [disabled]="busyId() === c.id"
+                        >
                           Aprobar
                         </button>
-                        <button class="btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700" type="button" (click)="rejectCompany(c)" [disabled]="busyId() === c.id">
+                        <button
+                          class="btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700"
+                          type="button"
+                          (click)="rejectCompany(c)"
+                          [disabled]="busyId() === c.id"
+                        >
                           Rechazar
                         </button>
                       </div>
@@ -94,15 +167,21 @@
       </div>
     </div>
 
-    <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
-      <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+    <div
+      class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+    >
+      <div
+        class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+      >
         <h2 class="heading-h2 text-sm">Empresas existentes</h2>
       </div>
       <div class="p-5">
         @if (loading()) {
           <div class="space-y-3">
-            @for (i of [1,2,3]; track i) {
-              <div class="h-14 animate-pulse rounded-lg border border-institution-border bg-institution-surface"></div>
+            @for (i of [1, 2, 3]; track i) {
+              <div
+                class="h-14 animate-pulse rounded-lg border border-institution-border bg-institution-surface"
+              ></div>
             }
           </div>
         } @else if (items().length === 0) {
@@ -124,21 +203,41 @@
                 @for (c of items(); track c.id) {
                   <tr>
                     <td>
-                      <p class="font-semibold text-institution-text-primary">{{ c.legal_name }}</p>
-                      <p class="text-xs text-institution-text-secondary">{{ c.sector || '—' }} · {{ c.contact_email }}</p>
+                      <p class="font-semibold text-institution-text-primary">
+                        {{ c.legal_name }}
+                      </p>
+                      <p class="text-xs text-institution-text-secondary">
+                        {{ c.sector || "—" }} · {{ c.contact_email }}
+                      </p>
                       @if (c.validated_at) {
-                        <p class="text-xs text-institution-text-secondary">Validada el {{ c.validated_at | date:'dd MMM yyyy' }}</p>
+                        <p class="text-xs text-institution-text-secondary">
+                          Validada el {{ c.validated_at | date: "dd MMM yyyy" }}
+                        </p>
                       }
                     </td>
-                    <td><span [class]="badgeClass(c.status)">{{ statusLabel(c.status) }}</span></td>
+                    <td>
+                      <span [class]="badgeClass(c.status)">{{
+                        statusLabel(c.status)
+                      }}</span>
+                    </td>
                     <td>
                       <div class="flex justify-end">
-                        @if (c.status === 'active') {
-                          <button class="btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700" type="button" (click)="setStatus(c, 'suspend')" [disabled]="busyId() === c.id">
+                        @if (c.status === "active") {
+                          <button
+                            class="btn-ghost btn-sm text-red-600 hover:bg-red-50 hover:text-red-700"
+                            type="button"
+                            (click)="setStatus(c, 'suspend')"
+                            [disabled]="busyId() === c.id"
+                          >
                             Suspender
                           </button>
                         } @else {
-                          <button class="btn-primary btn-sm" type="button" (click)="setStatus(c, 'reactivate')" [disabled]="busyId() === c.id">
+                          <button
+                            class="btn-primary btn-sm"
+                            type="button"
+                            (click)="setStatus(c, 'reactivate')"
+                            [disabled]="busyId() === c.id"
+                          >
                             Reactivar
                           </button>
                         }

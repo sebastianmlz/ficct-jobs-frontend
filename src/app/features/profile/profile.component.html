@@ -5,20 +5,34 @@
 ></app-page-header>
 
 <div class="grid gap-6 lg:grid-cols-3">
-
-  <form class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-2" [formGroup]="form" (ngSubmit)="save()" novalidate>
-    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+  <form
+    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-2"
+    [formGroup]="form"
+    (ngSubmit)="save()"
+    novalidate
+  >
+    <div
+      class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+    >
       <h2 class="heading-h2 text-sm">Información básica</h2>
     </div>
     <div class="p-5 space-y-4">
       <div class="grid gap-3 sm:grid-cols-2">
         <div>
           <label class="label-base" for="p-fullname">Nombre completo</label>
-          <input id="p-fullname" class="input-base" formControlName="full_name" />
+          <input
+            id="p-fullname"
+            class="input-base"
+            formControlName="full_name"
+          />
         </div>
         <div>
           <label class="label-base" for="p-headline">Título profesional</label>
-          <input id="p-headline" class="input-base" formControlName="headline" />
+          <input
+            id="p-headline"
+            class="input-base"
+            formControlName="headline"
+          />
         </div>
         <div>
           <label class="label-base" for="p-career">Carrera</label>
@@ -26,7 +40,12 @@
         </div>
         <div>
           <label class="label-base" for="p-grad">Año de egreso</label>
-          <input id="p-grad" type="number" class="input-base" formControlName="graduation_year" />
+          <input
+            id="p-grad"
+            type="number"
+            class="input-base"
+            formControlName="graduation_year"
+          />
         </div>
         <div>
           <label class="label-base" for="p-phone">Teléfono</label>
@@ -38,32 +57,78 @@
         </div>
         <div class="sm:col-span-2">
           <label class="label-base" for="p-bio">Biografía</label>
-          <textarea id="p-bio" class="input-base h-24" formControlName="bio"></textarea>
+          <textarea
+            id="p-bio"
+            class="input-base h-24"
+            formControlName="bio"
+          ></textarea>
         </div>
         <div>
           <label class="label-base" for="p-linkedin">LinkedIn</label>
-          <input id="p-linkedin" class="input-base" formControlName="linkedin_url" placeholder="https://linkedin.com/in/…" />
+          <input
+            id="p-linkedin"
+            class="input-base"
+            formControlName="linkedin_url"
+            placeholder="https://linkedin.com/in/…"
+          />
         </div>
         <div>
           <label class="label-base" for="p-github">GitHub</label>
-          <input id="p-github" class="input-base" formControlName="github_url" placeholder="https://github.com/…" />
+          <input
+            id="p-github"
+            class="input-base"
+            formControlName="github_url"
+            placeholder="https://github.com/…"
+          />
         </div>
       </div>
 
       @if (errorMessage()) {
         <div class="alert-danger text-sm">{{ errorMessage() }}</div>
       }
-      <div class="flex flex-wrap items-center gap-3 border-t border-institution-border pt-4">
+      <div
+        class="flex flex-wrap items-center gap-3 border-t border-institution-border pt-4"
+      >
         <button class="btn-primary" type="submit" [disabled]="busy()">
           @if (busy()) {
-            <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+            <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
           }
-          {{ busy() ? 'Cargando…' : 'Guardar cambios' }}
+          {{ busy() ? "Cargando…" : "Guardar cambios" }}
         </button>
         @if (!cvNotReachable()) {
-          <a class="btn-secondary" [href]="cvBuilderHref()" target="_blank" rel="noopener" (click)="trackCvOpen()">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          <a
+            class="btn-secondary"
+            [href]="cvBuilderHref()"
+            target="_blank"
+            rel="noopener"
+            (click)="trackCvOpen()"
+          >
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
             </svg>
             Abrir en CV Builder
           </a>
@@ -72,14 +137,33 @@
     </div>
   </form>
 
-  <aside class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
-    <div class="flex items-center justify-between border-b border-institution-border bg-institution-surface px-5 py-3.5">
+  <aside
+    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+  >
+    <div
+      class="flex items-center justify-between border-b border-institution-border bg-institution-surface px-5 py-3.5"
+    >
       <h2 class="heading-h2 text-sm">Documentos</h2>
       <label class="btn-secondary btn-sm cursor-pointer">
-        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        <svg
+          class="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+          />
         </svg>
-        <input type="file" class="hidden" accept=".pdf,.doc,.docx" (change)="onUpload($event)" />
+        <input
+          type="file"
+          class="hidden"
+          accept=".pdf,.doc,.docx"
+          (change)="onUpload($event)"
+        />
         Subir CV
       </label>
     </div>
@@ -89,28 +173,70 @@
       }
       @if (documents().length === 0) {
         <div class="flex flex-col items-center py-6 text-center">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-institution-surface">
-            <svg class="h-5 w-5 text-institution-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-institution-surface"
+          >
+            <svg
+              class="h-5 w-5 text-institution-text-secondary"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
           </div>
-          <p class="mt-2 text-sm text-institution-text-secondary">Aún no ha subido documentos.</p>
+          <p class="mt-2 text-sm text-institution-text-secondary">
+            Aún no ha subido documentos.
+          </p>
         </div>
       } @else {
         <ul class="space-y-2">
           @for (d of documents(); track d.id) {
-            <li class="flex items-start justify-between gap-3 rounded-lg border border-institution-border p-3">
+            <li
+              class="flex items-start justify-between gap-3 rounded-lg border border-institution-border p-3"
+            >
               <div class="min-w-0">
-                <p class="truncate text-sm font-medium text-institution-text-primary">{{ d.file_name }}</p>
-                <p class="mt-0.5 text-xs text-institution-text-secondary">{{ d.kind }} · {{ humanSize(d.size_bytes) }}</p>
+                <p
+                  class="truncate text-sm font-medium text-institution-text-primary"
+                >
+                  {{ d.file_name }}
+                </p>
+                <p class="mt-0.5 text-xs text-institution-text-secondary">
+                  {{ d.kind }} · {{ humanSize(d.size_bytes) }}
+                </p>
                 <div class="mt-1 flex items-center gap-1">
-                  <span class="inline-block h-1.5 w-1.5 rounded-full" [class.bg-emerald-500]="d.ingest_status === 'ingested'" [class.bg-amber-400]="d.ingest_status !== 'ingested'"></span>
-                  <span class="text-xs text-institution-text-secondary">{{ d.ingest_status }}</span>
+                  <span
+                    class="inline-block h-1.5 w-1.5 rounded-full"
+                    [class.bg-emerald-500]="d.ingest_status === 'ingested'"
+                    [class.bg-amber-400]="d.ingest_status !== 'ingested'"
+                  ></span>
+                  <span class="text-xs text-institution-text-secondary">{{
+                    d.ingest_status
+                  }}</span>
                 </div>
               </div>
-              <button class="btn-ghost btn-sm shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700" type="button" (click)="remove(d.id)">
-                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              <button
+                class="btn-ghost btn-sm shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                type="button"
+                (click)="remove(d.id)"
+              >
+                <svg
+                  class="h-3.5 w-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
                 </svg>
               </button>
             </li>
@@ -120,15 +246,27 @@
     </div>
   </aside>
 
-  <section class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-3">
-    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+  <section
+    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-3"
+  >
+    <div
+      class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+    >
       <h2 class="heading-h2 text-sm">Formación</h2>
     </div>
     <div class="p-5 space-y-5">
-      <form class="grid gap-3 sm:grid-cols-6" [formGroup]="eduForm" (ngSubmit)="addEducation()">
+      <form
+        class="grid gap-3 sm:grid-cols-6"
+        [formGroup]="eduForm"
+        (ngSubmit)="addEducation()"
+      >
         <div class="sm:col-span-2">
           <label class="label-base" for="edu-institution">Institución</label>
-          <input id="edu-institution" class="input-base" formControlName="institution" />
+          <input
+            id="edu-institution"
+            class="input-base"
+            formControlName="institution"
+          />
         </div>
         <div class="sm:col-span-2">
           <label class="label-base" for="edu-degree">Título</label>
@@ -136,56 +274,111 @@
         </div>
         <div>
           <label class="label-base" for="edu-start">Año inicio</label>
-          <input id="edu-start" type="number" class="input-base" formControlName="start_year" />
+          <input
+            id="edu-start"
+            type="number"
+            class="input-base"
+            formControlName="start_year"
+          />
         </div>
         <div>
           <label class="label-base" for="edu-end">Año fin</label>
-          <input id="edu-end" type="number" class="input-base" formControlName="end_year" [attr.disabled]="eduForm.controls.is_ongoing.value ? '' : null" />
+          <input
+            id="edu-end"
+            type="number"
+            class="input-base"
+            formControlName="end_year"
+            [attr.disabled]="eduForm.controls.is_ongoing.value ? '' : null"
+          />
         </div>
-        <label class="sm:col-span-3 flex items-center gap-2 text-sm text-institution-text-primary">
-          <input type="checkbox" class="h-4 w-4 rounded border-institution-border text-ficct-600 focus:ring-ficct-500" formControlName="is_ongoing" />
+        <label
+          class="sm:col-span-3 flex items-center gap-2 text-sm text-institution-text-primary"
+        >
+          <input
+            type="checkbox"
+            class="h-4 w-4 rounded border-institution-border text-ficct-600 focus:ring-ficct-500"
+            formControlName="is_ongoing"
+          />
           En curso
         </label>
         <div class="flex items-end sm:col-span-3 sm:justify-end">
-          <button class="btn-primary btn-sm" type="submit" [disabled]="eduForm.invalid">
+          <button
+            class="btn-primary btn-sm"
+            type="submit"
+            [disabled]="eduForm.invalid"
+          >
             Agregar
           </button>
         </div>
       </form>
 
       @if (educations().length > 0) {
-        <ul class="divide-y divide-institution-border rounded-lg border border-institution-border">
+        <ul
+          class="divide-y divide-institution-border rounded-lg border border-institution-border"
+        >
           @for (e of educations(); track e.id) {
             <li class="flex items-center justify-between gap-3 px-4 py-3">
               <div>
-                <p class="text-sm font-medium text-institution-text-primary">{{ e.institution }}</p>
+                <p class="text-sm font-medium text-institution-text-primary">
+                  {{ e.institution }}
+                </p>
                 <p class="text-xs text-institution-text-secondary">
-                  {{ e.degree || '—' }} · {{ e.start_year }} – {{ e.is_ongoing ? 'En curso' : (e.end_year || '—') }}
+                  {{ e.degree || "—" }} · {{ e.start_year }} –
+                  {{ e.is_ongoing ? "En curso" : e.end_year || "—" }}
                 </p>
               </div>
-              <button class="btn-ghost btn-sm shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700" type="button" (click)="removeEducation(e.id)">
-                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              <button
+                class="btn-ghost btn-sm shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                type="button"
+                (click)="removeEducation(e.id)"
+              >
+                <svg
+                  class="h-3.5 w-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </li>
           }
         </ul>
       } @else {
-        <p class="text-sm text-institution-text-secondary">Aún no ha agregado formación.</p>
+        <p class="text-sm text-institution-text-secondary">
+          Aún no ha agregado formación.
+        </p>
       }
     </div>
   </section>
 
-  <section class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-3">
-    <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+  <section
+    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-3"
+  >
+    <div
+      class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+    >
       <h2 class="heading-h2 text-sm">Habilidades</h2>
     </div>
     <div class="p-5 space-y-5">
-      <form class="grid gap-3 sm:grid-cols-5" [formGroup]="skillForm" (ngSubmit)="addSkill()">
+      <form
+        class="grid gap-3 sm:grid-cols-5"
+        [formGroup]="skillForm"
+        (ngSubmit)="addSkill()"
+      >
         <div class="sm:col-span-2">
           <label class="label-base" for="skill-name">Habilidad</label>
-          <input id="skill-name" class="input-base" formControlName="name" placeholder="Python, React, SQL…" />
+          <input
+            id="skill-name"
+            class="input-base"
+            formControlName="name"
+            placeholder="Python, React, SQL…"
+          />
         </div>
         <div>
           <label class="label-base" for="skill-level">Nivel</label>
@@ -199,10 +392,19 @@
         </div>
         <div>
           <label class="label-base" for="skill-years">Años</label>
-          <input id="skill-years" type="number" class="input-base" formControlName="years_experience" />
+          <input
+            id="skill-years"
+            type="number"
+            class="input-base"
+            formControlName="years_experience"
+          />
         </div>
         <div class="flex items-end">
-          <button class="btn-primary btn-sm w-full" type="submit" [disabled]="skillForm.invalid">
+          <button
+            class="btn-primary btn-sm w-full"
+            type="submit"
+            [disabled]="skillForm.invalid"
+          >
             Agregar
           </button>
         </div>
@@ -211,22 +413,41 @@
       @if (skills().length > 0) {
         <ul class="flex flex-wrap gap-2">
           @for (s of skills(); track s.id) {
-            <li class="flex items-center gap-1.5 rounded-full border border-ficct-200 bg-ficct-50 px-3 py-1 text-xs font-medium text-ficct-700">
+            <li
+              class="flex items-center gap-1.5 rounded-full border border-ficct-200 bg-ficct-50 px-3 py-1 text-xs font-medium text-ficct-700"
+            >
               {{ s.name }}
               <span class="text-ficct-400">·</span>
               <span>L{{ s.level }}</span>
               <span class="text-ficct-400">·</span>
               <span>{{ s.years_experience }}y</span>
-              <button class="ml-0.5 rounded-full p-0.5 hover:bg-ficct-200 hover:text-ficct-900" type="button" (click)="removeSkill(s.id)" aria-label="Quitar">
-                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              <button
+                class="ml-0.5 rounded-full p-0.5 hover:bg-ficct-200 hover:text-ficct-900"
+                type="button"
+                (click)="removeSkill(s.id)"
+                aria-label="Quitar"
+              >
+                <svg
+                  class="h-3 w-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </li>
           }
         </ul>
       } @else {
-        <p class="text-sm text-institution-text-secondary">Aún no ha declarado habilidades.</p>
+        <p class="text-sm text-institution-text-secondary">
+          Aún no ha declarado habilidades.
+        </p>
       }
     </div>
   </section>

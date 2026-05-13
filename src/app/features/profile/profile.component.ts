@@ -1,47 +1,82 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+} from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 
-import { environment } from '../../../environments/environment';
-import { CandidateProfile, DocumentItem } from '../../core/models';
-import { EducationItem, ProfilesService, SkillItem } from '../../core/services/profiles.service';
-import { ToastService } from '../../core/services/toast.service';
-import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { environment } from "../../../environments/environment";
+import { CandidateProfile, DocumentItem } from "../../core/models";
+import {
+  EducationItem,
+  ProfilesService,
+  SkillItem,
+} from "../../core/services/profiles.service";
+import { ToastService } from "../../core/services/toast.service";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 @Component({
-  selector: 'app-profile',
+  selector: "app-profile",
   standalone: true,
   imports: [ReactiveFormsModule, PageHeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './profile.component.html',
+  templateUrl: "./profile.component.html",
 })
 export class ProfileComponent implements OnInit {
   private readonly service = inject(ProfilesService);
   private readonly toast = inject(ToastService);
 
   protected readonly form = new FormGroup({
-    full_name: new FormControl('', { nonNullable: true, validators: [Validators.minLength(2)] }),
-    headline: new FormControl('', { nonNullable: true }),
-    career: new FormControl('', { nonNullable: true }),
-    graduation_year: new FormControl<number | null>(null, { nonNullable: false }),
-    phone: new FormControl('', { nonNullable: true }),
-    city: new FormControl('', { nonNullable: true }),
-    bio: new FormControl('', { nonNullable: true }),
-    linkedin_url: new FormControl('', { nonNullable: true }),
-    github_url: new FormControl('', { nonNullable: true }),
+    full_name: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.minLength(2)],
+    }),
+    headline: new FormControl("", { nonNullable: true }),
+    career: new FormControl("", { nonNullable: true }),
+    graduation_year: new FormControl<number | null>(null, {
+      nonNullable: false,
+    }),
+    phone: new FormControl("", { nonNullable: true }),
+    city: new FormControl("", { nonNullable: true }),
+    bio: new FormControl("", { nonNullable: true }),
+    linkedin_url: new FormControl("", { nonNullable: true }),
+    github_url: new FormControl("", { nonNullable: true }),
   });
 
   protected readonly eduForm = new FormGroup({
-    institution: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
-    degree: new FormControl('', { nonNullable: true }),
-    start_year: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1950), Validators.max(2100)] }),
+    institution: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(2)],
+    }),
+    degree: new FormControl("", { nonNullable: true }),
+    start_year: new FormControl<number | null>(null, {
+      validators: [
+        Validators.required,
+        Validators.min(1950),
+        Validators.max(2100),
+      ],
+    }),
     end_year: new FormControl<number | null>(null),
     is_ongoing: new FormControl(false, { nonNullable: true }),
   });
 
   protected readonly skillForm = new FormGroup({
-    name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(2)] }),
+    name: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(2)],
+    }),
     level: new FormControl(3, { nonNullable: true }),
-    years_experience: new FormControl(1, { nonNullable: true, validators: [Validators.min(0), Validators.max(50)] }),
+    years_experience: new FormControl(1, {
+      nonNullable: true,
+      validators: [Validators.min(0), Validators.max(50)],
+    }),
   });
 
   private readonly busySignal = signal(false);
@@ -71,7 +106,7 @@ export class ProfileComponent implements OnInit {
   }
 
   protected humanSize(bytes: number): string {
-    if (!bytes) return '0 KB';
+    if (!bytes) return "0 KB";
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
@@ -83,16 +118,20 @@ export class ProfileComponent implements OnInit {
     }
     this.busySignal.set(true);
     this.errorSignal.set(null);
-    this.service.updateMyProfile(this.form.getRawValue() as Partial<CandidateProfile>).subscribe({
-      next: () => {
-        this.busySignal.set(false);
-        this.toast.success('Perfil guardado');
-      },
-      error: (err) => {
-        this.busySignal.set(false);
-        this.errorSignal.set(err?.error?.error?.message ?? 'No se pudo guardar el perfil.');
-      },
-    });
+    this.service
+      .updateMyProfile(this.form.getRawValue() as Partial<CandidateProfile>)
+      .subscribe({
+        next: () => {
+          this.busySignal.set(false);
+          this.toast.success("Perfil guardado");
+        },
+        error: (err) => {
+          this.busySignal.set(false);
+          this.errorSignal.set(
+            err?.error?.error?.message ?? "No se pudo guardar el perfil.",
+          );
+        },
+      });
   }
 
   protected onUpload(event: Event): void {
@@ -105,29 +144,34 @@ export class ProfileComponent implements OnInit {
     this.service.uploadDocument(file).subscribe({
       next: () => {
         this.refreshDocuments();
-        this.toast.success('Documento subido', 'Procesamiento iniciado.');
-        input.value = '';
+        this.toast.success("Documento subido", "Procesamiento iniciado.");
+        input.value = "";
       },
       error: (err) => {
         const code = err?.error?.error?.code;
         const msg = err?.error?.error?.message;
-        const text = msg ?? (code ? `Error: ${code}` : 'No se pudo subir el documento.');
+        const text =
+          msg ?? (code ? `Error: ${code}` : "No se pudo subir el documento.");
         this.uploadErrorSignal.set(text);
-        this.toast.danger('Error al subir', text);
+        this.toast.danger("Error al subir", text);
       },
     });
   }
 
   protected remove(id: string): void {
-    if (!confirm('¿Eliminar este documento y sus entradas asociadas? Esta acción es irreversible.')) {
+    if (
+      !confirm(
+        "¿Eliminar este documento y sus entradas asociadas? Esta acción es irreversible.",
+      )
+    ) {
       return;
     }
     this.service.deleteDocument(id).subscribe({
       next: () => {
         this.refreshDocuments();
-        this.toast.warning('Documento eliminado');
+        this.toast.warning("Documento eliminado");
       },
-      error: () => this.toast.danger('No se pudo eliminar el documento'),
+      error: () => this.toast.danger("No se pudo eliminar el documento"),
     });
   }
 
@@ -141,19 +185,23 @@ export class ProfileComponent implements OnInit {
       .addEducation({
         institution: value.institution,
         degree: value.degree,
-        field_of_study: '',
+        field_of_study: "",
         start_year: value.start_year as number,
-        end_year: value.is_ongoing ? null : value.end_year ?? null,
+        end_year: value.is_ongoing ? null : (value.end_year ?? null),
         is_ongoing: value.is_ongoing,
-        description: '',
+        description: "",
       })
       .subscribe({
         next: () => {
           this.eduForm.reset({ is_ongoing: false });
           this.refreshEducation();
-          this.toast.success('Formación agregada');
+          this.toast.success("Formación agregada");
         },
-        error: (err) => this.toast.danger('No se pudo agregar la formación', err?.error?.error?.message ?? ''),
+        error: (err) =>
+          this.toast.danger(
+            "No se pudo agregar la formación",
+            err?.error?.error?.message ?? "",
+          ),
       });
   }
 
@@ -170,14 +218,24 @@ export class ProfileComponent implements OnInit {
       return;
     }
     const value = this.skillForm.getRawValue();
-    this.service.addSkill({ name: value.name, level: value.level, years_experience: value.years_experience }).subscribe({
-      next: () => {
-        this.skillForm.reset({ level: 3, years_experience: 1 });
-        this.refreshSkills();
-        this.toast.success('Habilidad agregada');
-      },
-      error: (err) => this.toast.danger('No se pudo agregar la habilidad', err?.error?.error?.message ?? ''),
-    });
+    this.service
+      .addSkill({
+        name: value.name,
+        level: value.level,
+        years_experience: value.years_experience,
+      })
+      .subscribe({
+        next: () => {
+          this.skillForm.reset({ level: 3, years_experience: 1 });
+          this.refreshSkills();
+          this.toast.success("Habilidad agregada");
+        },
+        error: (err) =>
+          this.toast.danger(
+            "No se pudo agregar la habilidad",
+            err?.error?.error?.message ?? "",
+          ),
+      });
   }
 
   protected removeSkill(id: string): void {
@@ -231,7 +289,7 @@ export class ProfileComponent implements OnInit {
   protected cvBuilderHref(): string {
     const base = environment.cvBuilderUrl;
     if (!base) {
-      return '#';
+      return "#";
     }
     const p = this.profileSignal();
     if (!p) {
@@ -239,21 +297,24 @@ export class ProfileComponent implements OnInit {
     }
     const params = new URLSearchParams();
     const append = (key: string, value: string | null | undefined) => {
-      if (value && String(value).trim() !== '') {
+      if (value && String(value).trim() !== "") {
         params.set(key, String(value).trim());
       }
     };
-    append('prefill_name', p.full_name);
-    append('prefill_email', p.email);
-    append('prefill_title', p.headline || p.career);
-    append('prefill_city', p.city);
-    append('prefill_linkedin', p.linkedin_url);
-    append('prefill_github', p.github_url);
+    append("prefill_name", p.full_name);
+    append("prefill_email", p.email);
+    append("prefill_title", p.headline || p.career);
+    append("prefill_city", p.city);
+    append("prefill_linkedin", p.linkedin_url);
+    append("prefill_github", p.github_url);
     const qs = params.toString();
     return qs ? `${base}/builder?${qs}` : `${base}/builder`;
   }
 
   protected trackCvOpen(): void {
-    this.toast.info('Abriendo CV Builder', 'Sus datos se envían como parámetros de URL y permanecen en su navegador.');
+    this.toast.info(
+      "Abriendo CV Builder",
+      "Sus datos se envían como parámetros de URL y permanecen en su navegador.",
+    );
   }
 }

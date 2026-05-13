@@ -4,26 +4,49 @@
   description="Registro inmutable de cada operación sobre usuarios, empresas, vacantes, postulaciones y documentos."
 ></app-page-header>
 
-<div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden mb-5">
-  <div class="border-b border-institution-border bg-institution-surface px-5 py-3.5">
+<div
+  class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden mb-5"
+>
+  <div
+    class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
+  >
     <h2 class="heading-h2 text-sm">Filtros de búsqueda</h2>
   </div>
-  <form class="grid gap-3 p-5 sm:grid-cols-4" [formGroup]="filters" (ngSubmit)="refresh()">
+  <form
+    class="grid gap-3 p-5 sm:grid-cols-4"
+    [formGroup]="filters"
+    (ngSubmit)="refresh()"
+  >
     <div>
       <label class="label-base" for="a-entity">Tipo de entidad</label>
-      <input id="a-entity" class="input-base" formControlName="entity_type" placeholder="User, Vacancy …" />
+      <input
+        id="a-entity"
+        class="input-base"
+        formControlName="entity_type"
+        placeholder="User, Vacancy …"
+      />
     </div>
     <div>
       <label class="label-base" for="a-action">Acción</label>
-      <input id="a-action" class="input-base" formControlName="action" placeholder="login, approve …" />
+      <input
+        id="a-action"
+        class="input-base"
+        formControlName="action"
+        placeholder="login, approve …"
+      />
     </div>
     <div>
       <label class="label-base" for="a-limit">Límite</label>
-      <input id="a-limit" type="number" class="input-base" formControlName="limit" />
+      <input
+        id="a-limit"
+        type="number"
+        class="input-base"
+        formControlName="limit"
+      />
     </div>
     <div class="flex items-end">
       <button class="btn-primary w-full" type="submit" [disabled]="loading()">
-        {{ loading() ? 'Cargando…' : 'Aplicar' }}
+        {{ loading() ? "Cargando…" : "Aplicar" }}
       </button>
     </div>
   </form>
@@ -31,8 +54,10 @@
 
 @if (loading()) {
   <div class="space-y-2">
-    @for (i of [1,2,3,4,5]; track i) {
-      <div class="h-14 animate-pulse rounded-xl border border-institution-border bg-white"></div>
+    @for (i of [1, 2, 3, 4, 5]; track i) {
+      <div
+        class="h-14 animate-pulse rounded-xl border border-institution-border bg-white"
+      ></div>
     }
   </div>
 } @else if (entries().length === 0) {
@@ -41,7 +66,9 @@
     description="Ajuste los filtros o espere a que haya actividad."
   ></app-empty-state>
 } @else {
-  <div class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden">
+  <div
+    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+  >
     <div class="table-container">
       <table class="table-base">
         <thead>
@@ -58,12 +85,25 @@
               <td>
                 <span class="badge-neutral font-mono">{{ e.action }}</span>
                 @if (hasPayload(e)) {
-                  <pre class="mt-1 overflow-x-auto rounded bg-institution-surface p-1.5 text-xs text-institution-text-primary">{{ e.payload | json }}</pre>
+                  <pre
+                    class="mt-1 overflow-x-auto rounded bg-institution-surface p-1.5 text-xs text-institution-text-primary"
+                    >{{ e.payload | json }}</pre
+                  >
                 }
               </td>
-              <td class="hidden text-xs text-institution-text-secondary md:table-cell">{{ e.actor_email || 'system' }}</td>
-              <td class="hidden font-mono text-xs text-institution-text-secondary lg:table-cell">{{ e.entity_type }}:{{ e.entity_id || '—' }}</td>
-              <td class="text-right text-xs text-institution-text-secondary">{{ e.created_at | date:'dd MMM, HH:mm' }}</td>
+              <td
+                class="hidden text-xs text-institution-text-secondary md:table-cell"
+              >
+                {{ e.actor_email || "system" }}
+              </td>
+              <td
+                class="hidden font-mono text-xs text-institution-text-secondary lg:table-cell"
+              >
+                {{ e.entity_type }}:{{ e.entity_id || "—" }}
+              </td>
+              <td class="text-right text-xs text-institution-text-secondary">
+                {{ e.created_at | date: "dd MMM, HH:mm" }}
+              </td>
             </tr>
           }
         </tbody>

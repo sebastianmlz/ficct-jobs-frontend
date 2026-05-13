@@ -27,26 +27,48 @@
         @for (c of items(); track c.profile_id) {
           <tr>
             <td>
-              <p class="font-semibold text-institution-text-primary">{{ c.full_name || '—' }}</p>
-              <p class="text-xs text-institution-text-secondary">{{ c.email }}</p>
+              <p class="font-semibold text-institution-text-primary">
+                {{ c.full_name || "—" }}
+              </p>
+              <p class="text-xs text-institution-text-secondary">
+                {{ c.email }}
+              </p>
             </td>
             <td class="hidden text-institution-text-secondary md:table-cell">
-              {{ c.career || '—' }}
+              {{ c.career || "—" }}
               @if (c.graduation_year) {
                 <span class="text-xs">· {{ c.graduation_year }}</span>
               }
             </td>
-            <td><span [class]="badgeClass(c.status)">{{ statusLabel(c.status) }}</span></td>
-            <td class="hidden text-xs text-institution-text-secondary md:table-cell">{{ c.created_at | date:'dd MMM yyyy' }}</td>
+            <td>
+              <span [class]="badgeClass(c.status)">{{
+                statusLabel(c.status)
+              }}</span>
+            </td>
+            <td
+              class="hidden text-xs text-institution-text-secondary md:table-cell"
+            >
+              {{ c.created_at | date: "dd MMM yyyy" }}
+            </td>
             <td>
               <div class="flex flex-wrap items-center justify-end gap-1.5">
-                @if (c.status !== 'approved') {
-                  <button class="btn-primary btn-sm" type="button" (click)="approve(c)" [disabled]="busyId() === c.profile_id">
+                @if (c.status !== "approved") {
+                  <button
+                    class="btn-primary btn-sm"
+                    type="button"
+                    (click)="approve(c)"
+                    [disabled]="busyId() === c.profile_id"
+                  >
                     Aprobar
                   </button>
                 }
-                @if (c.status !== 'rejected') {
-                  <button class="btn-ghost btn-sm" type="button" (click)="reject(c)" [disabled]="busyId() === c.profile_id">
+                @if (c.status !== "rejected") {
+                  <button
+                    class="btn-ghost btn-sm"
+                    type="button"
+                    (click)="reject(c)"
+                    [disabled]="busyId() === c.profile_id"
+                  >
                     Rechazar
                   </button>
                 }

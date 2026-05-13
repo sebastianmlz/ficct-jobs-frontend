@@ -1,22 +1,45 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DatePipe } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+} from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 
-import { ApplicationItem, StageCode } from '../../../core/models';
-import { interviewStatusLabel, stageLabel } from '../../../core/models/labels';
-import { Interview, InterviewsService } from '../../../core/services/interviews.service';
-import { JobsService } from '../../../core/services/jobs.service';
-import { ToastService } from '../../../core/services/toast.service';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { StageBadgeComponent } from '../../../shared/components/stage-badge/stage-badge.component';
+import { ApplicationItem, StageCode } from "../../../core/models";
+import { interviewStatusLabel, stageLabel } from "../../../core/models/labels";
+import {
+  Interview,
+  InterviewsService,
+} from "../../../core/services/interviews.service";
+import { JobsService } from "../../../core/services/jobs.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { StageBadgeComponent } from "../../../shared/components/stage-badge/stage-badge.component";
 
-import { AffinityDetail, IntelligenceService } from '../../../core/services/intelligence.service';
+import {
+  AffinityDetail,
+  IntelligenceService,
+} from "../../../core/services/intelligence.service";
 
-const REP_STAGES: StageCode[] = ['preselected', 'interview_done', 'offer', 'hired', 'rejected'];
+const REP_STAGES: StageCode[] = [
+  "preselected",
+  "interview_done",
+  "offer",
+  "hired",
+  "rejected",
+];
 
 @Component({
-  selector: 'app-rep-application-detail',
+  selector: "app-rep-application-detail",
   standalone: true,
   imports: [
     DatePipe,
@@ -26,7 +49,7 @@ const REP_STAGES: StageCode[] = ['preselected', 'interview_done', 'offer', 'hire
     StageBadgeComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './rep-application-detail.component.html',
+  templateUrl: "./rep-application-detail.component.html",
 })
 export class RepApplicationDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -39,16 +62,32 @@ export class RepApplicationDetailComponent implements OnInit {
   protected readonly stageLabel = stageLabel;
   protected readonly interviewStatusLabel = interviewStatusLabel;
   protected readonly interviewForm = new FormGroup({
-    scheduled_at: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    modality: new FormControl<'onsite' | 'remote' | 'phone'>('remote', { nonNullable: true }),
-    duration_minutes: new FormControl<number>(45, { nonNullable: true, validators: [Validators.min(10), Validators.max(480)] }),
-    location_or_link: new FormControl('', { nonNullable: true }),
-    notes: new FormControl('', { nonNullable: true }),
+    scheduled_at: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    modality: new FormControl<"onsite" | "remote" | "phone">("remote", {
+      nonNullable: true,
+    }),
+    duration_minutes: new FormControl<number>(45, {
+      nonNullable: true,
+      validators: [Validators.min(10), Validators.max(480)],
+    }),
+    location_or_link: new FormControl("", { nonNullable: true }),
+    notes: new FormControl("", { nonNullable: true }),
   });
   protected readonly notifyForm = new FormGroup({
-    kind: new FormControl<'info' | 'success' | 'warning'>('info', { nonNullable: true }),
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
-    body: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(4000)] }),
+    kind: new FormControl<"info" | "success" | "warning">("info", {
+      nonNullable: true,
+    }),
+    title: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(200)],
+    }),
+    body: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.maxLength(4000)],
+    }),
   });
 
   private readonly applicationSignal = signal<ApplicationItem | null>(null);
@@ -82,11 +121,14 @@ export class RepApplicationDetailComponent implements OnInit {
       next: (a) => {
         this.applicationSignal.set(a);
         this.busySignal.set(false);
-        this.toast.success('Etapa actualizada');
+        this.toast.success("Etapa actualizada");
       },
       error: (err) => {
         this.busySignal.set(false);
-        this.toast.danger('No se pudo cambiar la etapa', err?.error?.error?.message ?? '');
+        this.toast.danger(
+          "No se pudo cambiar la etapa",
+          err?.error?.error?.message ?? "",
+        );
       },
     });
   }
@@ -110,13 +152,19 @@ export class RepApplicationDetailComponent implements OnInit {
       .subscribe({
         next: () => {
           this.busySignal.set(false);
-          this.toast.success('Entrevista agendada');
-          this.interviewForm.reset({ duration_minutes: 45, modality: 'remote' });
+          this.toast.success("Entrevista agendada");
+          this.interviewForm.reset({
+            duration_minutes: 45,
+            modality: "remote",
+          });
           this.refresh();
         },
         error: (err) => {
           this.busySignal.set(false);
-          this.toast.danger('No se pudo agendar la entrevista', err?.error?.error?.message ?? '');
+          this.toast.danger(
+            "No se pudo agendar la entrevista",
+            err?.error?.error?.message ?? "",
+          );
         },
       });
   }
@@ -124,26 +172,34 @@ export class RepApplicationDetailComponent implements OnInit {
   protected completeInterview(id: string): void {
     this.interviewService.complete(id).subscribe({
       next: () => {
-        this.toast.success('Entrevista marcada como realizada');
+        this.toast.success("Entrevista marcada como realizada");
         this.refresh();
       },
-      error: (err) => this.toast.danger('No se pudo marcar la entrevista', err?.error?.error?.message ?? ''),
+      error: (err) =>
+        this.toast.danger(
+          "No se pudo marcar la entrevista",
+          err?.error?.error?.message ?? "",
+        ),
     });
   }
 
   protected cancelInterview(id: string): void {
-    const reason = prompt('¿Motivo de la cancelación? (opcional)') ?? '';
+    const reason = prompt("¿Motivo de la cancelación? (opcional)") ?? "";
     this.interviewService.cancel(id, reason).subscribe({
       next: () => {
-        this.toast.warning('Entrevista cancelada');
+        this.toast.warning("Entrevista cancelada");
         this.refresh();
       },
-      error: (err) => this.toast.danger('No se pudo cancelar la entrevista', err?.error?.error?.message ?? ''),
+      error: (err) =>
+        this.toast.danger(
+          "No se pudo cancelar la entrevista",
+          err?.error?.error?.message ?? "",
+        ),
     });
   }
 
   protected openNotifyModal(): void {
-    this.notifyForm.reset({ kind: 'info', title: '', body: '' });
+    this.notifyForm.reset({ kind: "info", title: "", body: "" });
     this.notifyOpenSignal.set(true);
   }
 
@@ -162,11 +218,14 @@ export class RepApplicationDetailComponent implements OnInit {
       next: () => {
         this.busySignal.set(false);
         this.notifyOpenSignal.set(false);
-        this.toast.success('Notificación enviada al candidato');
+        this.toast.success("Notificación enviada al candidato");
       },
       error: (err) => {
         this.busySignal.set(false);
-        this.toast.danger('No se pudo enviar la notificación', err?.error?.error?.message ?? '');
+        this.toast.danger(
+          "No se pudo enviar la notificación",
+          err?.error?.error?.message ?? "",
+        );
       },
     });
   }
@@ -185,9 +244,10 @@ export class RepApplicationDetailComponent implements OnInit {
       },
       error: (err) => {
         this.affinityBusySignal.set(false);
-        const msg = err?.error?.message
-          ?? err?.error?.error?.message
-          ?? 'El análisis de afinidad no está disponible.';
+        const msg =
+          err?.error?.message ??
+          err?.error?.error?.message ??
+          "El análisis de afinidad no está disponible.";
         this.affinityErrorSignal.set(msg);
       },
     });
@@ -203,7 +263,7 @@ export class RepApplicationDetailComponent implements OnInit {
   }
 
   private applicationId(): string | null {
-    return this.route.snapshot.paramMap.get('id');
+    return this.route.snapshot.paramMap.get("id");
   }
 
   private refresh(): void {
@@ -213,7 +273,7 @@ export class RepApplicationDetailComponent implements OnInit {
     }
     this.jobs.getApplication(id).subscribe({
       next: (a) => this.applicationSignal.set(a),
-      error: () => this.toast.danger('Postulación no encontrada'),
+      error: () => this.toast.danger("Postulación no encontrada"),
     });
     this.interviewService.list(id).subscribe({
       next: (items) => this.interviewsSignal.set(items),

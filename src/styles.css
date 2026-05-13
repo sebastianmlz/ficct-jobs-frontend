@@ -13,7 +13,7 @@
   }
 
   *:focus-visible {
-    outline: 2px solid theme('colors.ficct.500');
+    outline: 2px solid theme("colors.ficct.500");
     outline-offset: 2px;
     border-radius: 4px;
   }

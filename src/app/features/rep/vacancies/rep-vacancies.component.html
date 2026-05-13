@@ -15,7 +15,9 @@
     title="Aún no tiene vacantes"
     description="Publique su primera vacante para comenzar a recibir candidatos."
   >
-    <a class="btn-primary btn-sm" routerLink="/rep/vacancies/new">Nueva vacante</a>
+    <a class="btn-primary btn-sm" routerLink="/rep/vacancies/new"
+      >Nueva vacante</a
+    >
   </app-empty-state>
 } @else {
   <div class="table-container">
@@ -32,26 +34,50 @@
         @for (v of vacancies(); track v.id) {
           <tr>
             <td>
-              <p class="font-semibold text-institution-text-primary">{{ v.title }}</p>
-              <p class="text-xs text-institution-text-secondary">{{ v.location || '—' }}</p>
+              <p class="font-semibold text-institution-text-primary">
+                {{ v.title }}
+              </p>
+              <p class="text-xs text-institution-text-secondary">
+                {{ v.location || "—" }}
+              </p>
             </td>
-            <td><span [class]="badgeClass(v.status)">{{ statusLabel(v.status) }}</span></td>
-            <td class="hidden text-institution-text-secondary md:table-cell">{{ v.modality }}</td>
+            <td>
+              <span [class]="badgeClass(v.status)">{{
+                statusLabel(v.status)
+              }}</span>
+            </td>
+            <td class="hidden text-institution-text-secondary md:table-cell">
+              {{ v.modality }}
+            </td>
             <td>
               <div class="flex flex-wrap items-center justify-end gap-1.5">
-                <a class="btn-ghost btn-sm" [routerLink]="['/rep/vacancies', v.id, 'applicants']">
+                <a
+                  class="btn-ghost btn-sm"
+                  [routerLink]="['/rep/vacancies', v.id, 'applicants']"
+                >
                   Postulantes
                 </a>
-                <a class="btn-secondary btn-sm" [routerLink]="['/rep/vacancies', v.id, 'edit']">
+                <a
+                  class="btn-secondary btn-sm"
+                  [routerLink]="['/rep/vacancies', v.id, 'edit']"
+                >
                   Editar
                 </a>
-                @if (v.status === 'draft') {
-                  <button class="btn-primary btn-sm" type="button" (click)="activate(v)">
+                @if (v.status === "draft") {
+                  <button
+                    class="btn-primary btn-sm"
+                    type="button"
+                    (click)="activate(v)"
+                  >
                     Publicar
                   </button>
                 }
-                @if (v.status === 'active') {
-                  <button class="btn-danger btn-sm" type="button" (click)="close(v)">
+                @if (v.status === "active") {
+                  <button
+                    class="btn-danger btn-sm"
+                    type="button"
+                    (click)="close(v)"
+                  >
                     Cerrar
                   </button>
                 }
