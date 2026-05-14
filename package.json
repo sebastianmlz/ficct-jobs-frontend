@@ -7,9 +7,10 @@
   },
   "scripts": {
     "ng": "ng",
+    "prestart": "node scripts/ensure-environments.mjs",
     "start": "ng serve --host 0.0.0.0 --port 4200",
+    "prebuild": "node scripts/ensure-environments.mjs",
     "build": "ng build",
-    "build:prod": "ng build --configuration production",
     "test": "ng test --watch=false --browsers=ChromeHeadlessCI",
     "lint": "ng lint",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,css,json}\""

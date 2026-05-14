@@ -10,7 +10,13 @@ FROM node:${NODE_VERSION} AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx ng build --configuration production
+
+ARG API_BASE_URL
+ARG CV_BUILDER_URL
+ENV API_BASE_URL=${API_BASE_URL}
+ENV CV_BUILDER_URL=${CV_BUILDER_URL}
+
+RUN npm run build
 
 
 FROM nginx:1.27-alpine AS runtime
