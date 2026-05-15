@@ -213,13 +213,48 @@
                   <span
                     class="inline-block h-1.5 w-1.5 rounded-full"
                     [class.bg-emerald-500]="d.ingest_status === 'ingested'"
-                    [class.bg-amber-400]="d.ingest_status !== 'ingested'"
+                    [class.bg-red-500]="d.ingest_status === 'failed'"
+                    [class.bg-amber-400]="
+                      d.ingest_status !== 'ingested' &&
+                      d.ingest_status !== 'failed'
+                    "
                   ></span>
                   <span class="text-xs text-institution-text-secondary">{{
                     d.ingest_status
                   }}</span>
                 </div>
+                @if (d.ingest_status === "failed" && d.ingest_error) {
+                  <p class="mt-1 text-xs text-red-600">{{ d.ingest_error }}</p>
+                }
               </div>
+              @if (d.file_url) {
+                <a
+                  class="btn-ghost btn-sm shrink-0 text-institution-text-secondary hover:text-institution-text-primary"
+                  [href]="d.file_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Ver documento"
+                >
+                  <svg
+                    class="h-3.5 w-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                </a>
+              }
               <button
                 class="btn-ghost btn-sm shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
                 type="button"

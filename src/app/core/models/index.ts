@@ -61,6 +61,7 @@ export interface DocumentItem {
   size_bytes: number;
   sha256: string;
   s3_key: string;
+  file_url: string | null;
   ingest_status: DocumentIngestStatus;
   ingest_error: string;
   ingest_external_id: string;

@@ -142,10 +142,22 @@ export class ProfileComponent implements OnInit {
     }
     this.uploadErrorSignal.set(null);
     this.service.uploadDocument(file).subscribe({
-      next: () => {
+      next: (res) => {
         this.refreshDocuments();
-        this.toast.success("Documento subido", "Procesamiento iniciado.");
         input.value = "";
+        const doc = res as DocumentItem;
+        if (doc && doc.ingest_status === "failed") {
+          // The HTTP request succeeded but RAG ingestion failed; the document
+          // exists in S3 and DB but won't appear in ranking results. Surface
+          // the real state to the user instead of a misleading success toast.
+          const detail = doc.ingest_error || "El documento no pudo procesarse.";
+          this.uploadErrorSignal.set(detail);
+          this.toast.danger("Documento no procesable", detail);
+        } else if (doc && doc.ingest_status === "ingested") {
+          this.toast.success("Documento subido", "Procesamiento completado.");
+        } else {
+          this.toast.success("Documento subido", "Procesamiento iniciado.");
+        }
       },
       error: (err) => {
         const code = err?.error?.error?.code;
