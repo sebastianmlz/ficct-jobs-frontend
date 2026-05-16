@@ -17,12 +17,13 @@ import {
   SystemParameter,
 } from "../../../core/services/admin.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { EmptyStateComponent } from "../../../shared/components/empty-state/empty-state.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
   selector: "app-admin-parameters",
   standalone: true,
-  imports: [ReactiveFormsModule, PageHeaderComponent],
+  imports: [ReactiveFormsModule, PageHeaderComponent, EmptyStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./admin-parameters.component.html",
 })

@@ -36,27 +36,23 @@
           >
         </div>
         @if (v.applications.length) {
-          <div
-            class="mt-3 overflow-hidden rounded border border-institution-border"
-          >
-            <table class="w-full text-xs">
-              <thead
-                class="bg-institution-surface uppercase tracking-widest text-muted"
-              >
+          <div class="mt-3 table-container">
+            <table class="table-base text-xs">
+              <thead>
                 <tr>
-                  <th class="px-2 py-1 text-left">Candidato</th>
-                  <th class="px-2 py-1 text-left">Etapa final</th>
-                  <th class="px-2 py-1 text-left">Postuló</th>
+                  <th>Candidato</th>
+                  <th>Etapa final</th>
+                  <th>Postuló</th>
                 </tr>
               </thead>
               <tbody>
                 @for (a of v.applications; track a.id) {
-                  <tr class="border-t border-institution-border/60">
-                    <td class="px-2 py-1 text-institution-text-primary">
+                  <tr>
+                    <td class="text-institution-text-primary">
                       {{ a.candidate_name || a.candidate_email }}
                     </td>
-                    <td class="px-2 py-1">{{ stage(a.current_stage) }}</td>
-                    <td class="px-2 py-1 text-muted">
+                    <td>{{ stage(a.current_stage) }}</td>
+                    <td class="text-muted">
                       {{ a.applied_at | date: "mediumDate" }}
                     </td>
                   </tr>

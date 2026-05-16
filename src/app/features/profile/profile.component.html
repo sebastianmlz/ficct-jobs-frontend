@@ -6,17 +6,15 @@
 
 <div class="grid gap-6 lg:grid-cols-3">
   <form
-    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-2"
+    class="section-card lg:col-span-2"
     [formGroup]="form"
     (ngSubmit)="save()"
     novalidate
   >
-    <div
-      class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
-    >
+    <div class="section-card-header">
       <h2 class="heading-h2 text-sm">Información básica</h2>
     </div>
-    <div class="p-5 space-y-4">
+    <div class="section-card-body space-y-4">
       <div class="grid gap-3 sm:grid-cols-2">
         <div>
           <label class="label-base" for="p-fullname">Nombre completo</label>
@@ -137,12 +135,8 @@
     </div>
   </form>
 
-  <aside
-    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
-  >
-    <div
-      class="flex items-center justify-between border-b border-institution-border bg-institution-surface px-5 py-3.5"
-    >
+  <aside class="section-card">
+    <div class="section-card-header">
       <h2 class="heading-h2 text-sm">Documentos</h2>
       <label class="btn-secondary btn-sm cursor-pointer">
         <svg
@@ -167,7 +161,7 @@
         Subir CV
       </label>
     </div>
-    <div class="p-5">
+    <div class="section-card-body">
       @if (uploadError()) {
         <div class="alert-danger mb-3 text-xs">{{ uploadError() }}</div>
       }
@@ -256,7 +250,7 @@
                 </a>
               }
               <button
-                class="btn-ghost btn-sm shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                class="btn-ghost-danger btn-sm shrink-0"
                 type="button"
                 (click)="remove(d.id)"
               >
@@ -281,15 +275,11 @@
     </div>
   </aside>
 
-  <section
-    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-3"
-  >
-    <div
-      class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
-    >
+  <section class="section-card lg:col-span-3">
+    <div class="section-card-header">
       <h2 class="heading-h2 text-sm">Formación</h2>
     </div>
-    <div class="p-5 space-y-5">
+    <div class="section-card-body space-y-5">
       <form
         class="grid gap-3 sm:grid-cols-6"
         [formGroup]="eduForm"
@@ -363,7 +353,7 @@
                 </p>
               </div>
               <button
-                class="btn-ghost btn-sm shrink-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+                class="btn-ghost-danger btn-sm shrink-0"
                 type="button"
                 (click)="removeEducation(e.id)"
               >
@@ -392,15 +382,11 @@
     </div>
   </section>
 
-  <section
-    class="rounded-xl border border-institution-border bg-white shadow-card overflow-hidden lg:col-span-3"
-  >
-    <div
-      class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
-    >
+  <section class="section-card lg:col-span-3">
+    <div class="section-card-header">
       <h2 class="heading-h2 text-sm">Habilidades</h2>
     </div>
-    <div class="p-5 space-y-5">
+    <div class="section-card-body space-y-5">
       <form
         class="grid gap-3 sm:grid-cols-5"
         [formGroup]="skillForm"

@@ -2,14 +2,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  HostListener,
   Input,
   Output,
   signal,
 } from "@angular/core";
 
+import { ModalHostDirective } from "../../directives/modal-host.directive";
+
 @Component({
   selector: "app-confirm-dialog",
   standalone: true,
+  imports: [ModalHostDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./confirm-dialog.component.html",
 })
@@ -38,5 +42,12 @@ export class ConfirmDialogComponent {
   protected cancel(): void {
     this.openSignal.set(false);
     this.cancelled.emit();
+  }
+
+  @HostListener("document:keydown.escape")
+  protected onEscape(): void {
+    if (this.openSignal()) {
+      this.cancel();
+    }
   }
 }

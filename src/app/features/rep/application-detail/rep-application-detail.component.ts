@@ -2,7 +2,9 @@ import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  HostListener,
   OnInit,
+  computed,
   inject,
   signal,
 } from "@angular/core";
@@ -24,6 +26,7 @@ import { JobsService } from "../../../core/services/jobs.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { StageBadgeComponent } from "../../../shared/components/stage-badge/stage-badge.component";
+import { ModalHostDirective } from "../../../shared/directives/modal-host.directive";
 
 import {
   AffinityDetail,
@@ -47,6 +50,7 @@ const REP_STAGES: StageCode[] = [
     RouterLink,
     PageHeaderComponent,
     StageBadgeComponent,
+    ModalHostDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./rep-application-detail.component.html",
@@ -101,6 +105,15 @@ export class RepApplicationDetailComponent implements OnInit {
   protected readonly application = this.applicationSignal.asReadonly();
   protected readonly interviews = this.interviewsSignal.asReadonly();
   protected readonly busy = this.busySignal.asReadonly();
+  /** Trimmed, whitespace-aware view of the cover letter. Returns null
+   * when the field is missing, null, an empty string, or whitespace-only
+   * — so the template can branch on a single condition without
+   * accidentally rendering "    " as if it were a real letter. */
+  protected readonly coverLetterText = computed(() => {
+    const raw = this.applicationSignal()?.cover_letter ?? "";
+    const trimmed = typeof raw === "string" ? raw.trim() : "";
+    return trimmed.length > 0 ? trimmed : null;
+  });
   protected readonly notifyOpen = this.notifyOpenSignal.asReadonly();
   protected readonly affinityOpen = this.affinityOpenSignal.asReadonly();
   protected readonly affinity = this.affinitySignal.asReadonly();
@@ -205,6 +218,17 @@ export class RepApplicationDetailComponent implements OnInit {
 
   protected closeNotifyModal(): void {
     this.notifyOpenSignal.set(false);
+  }
+
+  @HostListener("document:keydown.escape")
+  protected onEscape(): void {
+    if (this.notifyOpenSignal()) {
+      this.notifyOpenSignal.set(false);
+      return;
+    }
+    if (this.affinityOpenSignal()) {
+      this.affinityOpenSignal.set(false);
+    }
   }
 
   protected sendNotification(): void {

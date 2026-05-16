@@ -163,11 +163,55 @@ export interface GapAnalysisResult {
   summary: string;
 }
 
+export interface ChatVacancyEntity {
+  kind: "vacancy";
+  id: string;
+  title: string;
+  company_name: string;
+  modality: string;
+  location: string;
+  status: string;
+}
+
+export interface ChatCandidateEntity {
+  kind: "candidate";
+  id: string;
+  user_id: string;
+  name: string;
+  headline: string;
+  career: string;
+  city: string;
+  /** Set by the backend only when the caller is a representative — points
+   * to the candidate's most recent application to the rep's own company.
+   * Lets the chat card render a "Ver postulación" CTA. */
+  application_id?: string;
+  application_vacancy_title?: string;
+}
+
+export type ChatEntity = ChatVacancyEntity | ChatCandidateEntity;
+
+export interface ChatSource {
+  document_id: string;
+  doc_type: "candidate" | "vacancy" | "unknown";
+  /** Cleaned evidence string. Backend has already stripped contact-info
+   * noise, collapsed whitespace, advanced past all-caps section headers
+   * and truncated at a word boundary. Frontend should render as-is. */
+  snippet: string;
+  /** Best chunk's similarity score; aggregated to entity level. */
+  score: number;
+  /** How many raw chunks rolled up into this entity result. */
+  chunk_count: number;
+  entity: ChatEntity | null;
+}
+
+export type ChatScope = "vacancies" | "company" | "global" | "unknown";
+
 export interface ChatResponse {
   answer: string;
   mode: string;
-  sources: { document_id: string; snippet: string }[];
+  sources: ChatSource[];
   token_usage: Record<string, number>;
+  scope?: ChatScope;
 }
 
 export interface ApiErrorEnvelope {

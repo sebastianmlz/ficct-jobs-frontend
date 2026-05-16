@@ -96,14 +96,15 @@ export class DashboardComponent implements OnInit {
   protected readonly recommendationsAvailable =
     this.recommendationsAvailableSignal.asReadonly();
   protected readonly missingSections = computed<
-    Array<keyof ProfileCompletion["sections"]>
+    (keyof ProfileCompletion["sections"])[]
   >(() => {
     const c = this.completionSignal();
     if (!c) return [];
     return (
-      Object.entries(c.sections) as Array<
-        [keyof ProfileCompletion["sections"], boolean]
-      >
+      Object.entries(c.sections) as [
+        keyof ProfileCompletion["sections"],
+        boolean,
+      ][]
     )
       .filter(([, ok]) => !ok)
       .map(([k]) => k);

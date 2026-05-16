@@ -94,6 +94,7 @@ export class AppShellComponent implements OnInit {
           path: "/closed-history",
           icon: "archive",
         },
+        { label: "Asistente", path: "/chat", icon: "chat" },
         { label: "Auditoría", path: "/admin/audit", icon: "document" },
       ];
     }

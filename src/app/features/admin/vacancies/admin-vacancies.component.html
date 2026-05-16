@@ -3,15 +3,13 @@
   title="Cola de vacantes"
   description="Revise las vacantes enviadas para aprobación institucional."
 >
-  <nav class="mt-4 flex flex-wrap gap-1.5">
+  <nav
+    class="mt-4 flex flex-nowrap gap-1.5 overflow-x-auto sm:flex-wrap"
+    aria-label="Filtros de estado"
+  >
     @for (f of filters; track f.key) {
       <button
-        class="rounded-full border px-3 py-1 text-xs font-medium transition-colors"
-        [class]="
-          active() === f.key
-            ? 'border-ficct-500 bg-ficct-50 text-ficct-700'
-            : 'border-institution-border bg-white text-institution-text-secondary hover:border-ficct-300 hover:text-ficct-600'
-        "
+        [class]="active() === f.key ? 'filter-chip-active' : 'filter-chip'"
         type="button"
         (click)="setFilter(f.key)"
       >

@@ -23,7 +23,7 @@
       </a>
 
       <nav
-        class="hidden items-center gap-0.5 md:flex"
+        class="hidden min-w-0 flex-1 items-center gap-0.5 overflow-x-auto md:flex"
         aria-label="Navegación principal"
       >
         @for (item of nav(); track item.path) {
@@ -31,10 +31,10 @@
             [routerLink]="item.path"
             routerLinkActive="nav-link-active"
             [routerLinkActiveOptions]="{ exact: false }"
-            class="nav-link"
+            class="nav-link shrink-0"
           >
             <app-icon [name]="item.icon" size="h-3.5 w-3.5" />
-            <span>{{ item.label }}</span>
+            <span class="whitespace-nowrap">{{ item.label }}</span>
           </a>
         }
       </nav>
@@ -129,7 +129,7 @@
   </header>
 
   <main id="main-content" class="flex-1">
-    <div class="container-page py-8 pb-24 sm:py-10 md:pb-10">
+    <div class="container-page pb-app-shell pt-6 sm:pt-8 md:pt-10">
       <router-outlet></router-outlet>
     </div>
   </main>
@@ -146,17 +146,14 @@
     </div>
   </footer>
 
-  <nav
-    class="fixed bottom-0 left-0 right-0 z-40 flex items-stretch border-t border-institution-border bg-white md:hidden"
-    aria-label="Navegación móvil"
-  >
+  <nav class="nav-bottom" aria-label="Navegación móvil">
     <div class="flex w-full overflow-x-auto">
       @for (item of nav(); track item.path) {
         <a
           [routerLink]="item.path"
           routerLinkActive="text-ficct-600 bg-ficct-50"
           [routerLinkActiveOptions]="{ exact: false }"
-          class="flex min-w-[60px] flex-1 flex-col items-center justify-center gap-0.5 px-2 py-2.5 text-institution-text-secondary transition-colors hover:text-institution-text-primary"
+          class="nav-bottom-item"
         >
           <app-icon [name]="item.icon" size="h-5 w-5" />
           <span class="text-[9px] font-medium leading-none">{{

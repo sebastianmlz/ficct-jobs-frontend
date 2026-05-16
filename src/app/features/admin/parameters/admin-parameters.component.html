@@ -69,9 +69,10 @@
       </div>
       <div class="p-5">
         @if (items().length === 0) {
-          <p class="text-sm text-institution-text-secondary">
-            Aún no hay parámetros configurados.
-          </p>
+          <app-empty-state
+            title="Sin parámetros configurados"
+            description="Cree el primer parámetro del sistema con el formulario de la izquierda."
+          ></app-empty-state>
         } @else {
           <div class="table-container">
             <table class="table-base">

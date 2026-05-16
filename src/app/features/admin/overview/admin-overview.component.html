@@ -232,38 +232,40 @@
             </p>
           </div>
         </div>
-        <table class="table-base">
-          <thead>
-            <tr>
-              <th>Operación</th>
-              <th>Llamadas</th>
-              <th>Entrada</th>
-              <th>Salida</th>
-              <th>Total procesado</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (op of tokenOperations(); track op.operation) {
+        <div class="table-container">
+          <table class="table-base">
+            <thead>
               <tr>
-                <td class="font-mono text-xs">{{ op.operation }}</td>
-                <td>{{ op.calls }}</td>
-                <td>{{ op.input_tokens }}</td>
-                <td>{{ op.output_tokens }}</td>
-                <td class="font-semibold">{{ op.total_tokens }}</td>
+                <th>Operación</th>
+                <th>Llamadas</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th>Total procesado</th>
               </tr>
-            }
-            @if (tokenOperations().length === 0) {
-              <tr>
-                <td
-                  colspan="5"
-                  class="py-3 text-xs text-institution-text-secondary"
-                >
-                  Sin registros de uso en esta ventana.
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (op of tokenOperations(); track op.operation) {
+                <tr>
+                  <td class="font-mono text-xs">{{ op.operation }}</td>
+                  <td>{{ op.calls }}</td>
+                  <td>{{ op.input_tokens }}</td>
+                  <td>{{ op.output_tokens }}</td>
+                  <td class="font-semibold">{{ op.total_tokens }}</td>
+                </tr>
+              }
+              @if (tokenOperations().length === 0) {
+                <tr>
+                  <td
+                    colspan="5"
+                    class="py-3 text-xs text-institution-text-secondary"
+                  >
+                    Sin registros de uso en esta ventana.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       } @else {
         <p class="text-sm text-institution-text-secondary">Cargando…</p>
       }

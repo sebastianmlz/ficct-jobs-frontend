@@ -5,17 +5,15 @@
 ></app-page-header>
 
 <form
-  class="max-w-3xl rounded-xl border border-institution-border bg-white shadow-card overflow-hidden"
+  class="section-card max-w-3xl"
   [formGroup]="form"
   (ngSubmit)="save()"
   novalidate
 >
-  <div
-    class="border-b border-institution-border bg-institution-surface px-5 py-3.5"
-  >
-    <h2 class="heading-h2 text-sm">Título</h2>
+  <div class="section-card-header">
+    <h2 class="heading-h2 text-sm">Datos de la vacante</h2>
   </div>
-  <div class="p-5 space-y-4">
+  <div class="section-card-body space-y-4">
     <div>
       <label class="label-base" for="vt-title">Título</label>
       <input id="vt-title" class="input-base" formControlName="title" />
@@ -50,7 +48,7 @@
       ></textarea>
     </div>
 
-    <div class="grid gap-3 sm:grid-cols-3">
+    <div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
       <div>
         <label class="label-base" for="vt-modality">Modalidad</label>
         <select id="vt-modality" class="input-base" formControlName="modality">
@@ -95,31 +93,29 @@
     @if (errorMessage()) {
       <div class="alert-danger text-sm">{{ errorMessage() }}</div>
     }
+  </div>
 
-    <div
-      class="flex flex-wrap items-center gap-2 border-t border-institution-border pt-4"
-    >
-      <button class="btn-primary" type="submit" [disabled]="busy()">
-        @if (busy()) {
-          <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            />
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-            />
-          </svg>
-        }
-        {{ busy() ? "Cargando…" : "Guardar" }}
-      </button>
-      <a class="btn-ghost" routerLink="/rep/vacancies">Cancelar</a>
-    </div>
+  <div class="form-actions-sticky">
+    <a class="btn-ghost" routerLink="/rep/vacancies">Cancelar</a>
+    <button class="btn-primary" type="submit" [disabled]="busy()">
+      @if (busy()) {
+        <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+          />
+        </svg>
+      }
+      {{ busy() ? "Cargando…" : "Guardar" }}
+    </button>
   </div>
 </form>

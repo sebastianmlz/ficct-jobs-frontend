@@ -1,16 +1,28 @@
 @if (open()) {
   <div
-    class="fixed inset-0 z-40 flex items-center justify-center bg-institution-navy/40 p-4"
-    role="dialog"
-    aria-modal="true"
+    class="modal-overlay"
+    role="presentation"
+    (mousedown)="cancel()"
   >
-    <div class="w-full max-w-md card">
-      <h3 class="heading-h2 text-institution-text-primary">{{ title }}</h3>
-      @if (description) {
-        <p class="mt-2 text-sm text-muted">{{ description }}</p>
-      }
-      <ng-content></ng-content>
-      <div class="mt-6 flex justify-end gap-2">
+    <div
+      appModalHost
+      class="modal-panel"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'confirm-dialog-title'"
+      tabindex="-1"
+      (mousedown)="$event.stopPropagation()"
+    >
+      <div class="modal-body space-y-2">
+        <h3 id="confirm-dialog-title" class="heading-h2 text-institution-text-primary">
+          {{ title }}
+        </h3>
+        @if (description) {
+          <p class="text-sm text-muted">{{ description }}</p>
+        }
+        <ng-content></ng-content>
+      </div>
+      <div class="modal-footer">
         <button class="btn-secondary btn-sm" type="button" (click)="cancel()">
           {{ cancelLabel }}
         </button>

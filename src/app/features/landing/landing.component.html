@@ -1,6 +1,6 @@
 <div class="flex min-h-screen flex-col bg-white">
   <header
-    class="sticky top-0 z-50 border-b border-institution-border/70 bg-white/95 backdrop-blur-sm"
+    class="safe-pt sticky top-0 z-50 border-b border-institution-border/70 bg-white/95 backdrop-blur-sm"
   >
     <div class="container-page flex h-14 items-center justify-between">
       <a
@@ -318,12 +318,7 @@
           <a class="btn-accent btn-lg" routerLink="/auth/register">
             Crear cuenta
           </a>
-          <a
-            class="inline-flex items-center justify-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-6 py-3 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            routerLink="/auth/login"
-          >
-            Ingresar
-          </a>
+          <a class="btn-on-dark btn-lg" routerLink="/auth/login">Ingresar</a>
         </div>
       </div>
     </section>

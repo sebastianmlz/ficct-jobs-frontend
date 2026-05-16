@@ -60,9 +60,12 @@ const STEPS: Record<Role, WizardStep[]> = {
   ],
 };
 
+import { ModalHostDirective } from "../../directives/modal-host.directive";
+
 @Component({
   selector: "app-onboarding-wizard",
   standalone: true,
+  imports: [ModalHostDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: "./onboarding-wizard.component.html",
 })
