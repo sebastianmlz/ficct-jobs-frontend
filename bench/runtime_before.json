@@ -1,0 +1,7 @@
+{
+  "label": "before",
+  "base_url": "http://localhost:54200",
+  "requests": 14,
+  "total_raw_bytes": 402562,
+  "total_wire_bytes": 402564
+}

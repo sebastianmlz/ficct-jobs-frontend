@@ -1,0 +1,52 @@
+name: ficct-fe-bench
+
+# Isolated frontend bench. Two services:
+#   builder  — builds the production bundle (npm install + ng build) into
+#              a named volume so we can measure & diff artifacts.
+#   nginx    — serves the built artifact for runtime checks (HTTP requests
+#              on first load), with /api/v1 proxied to the local backend
+#              bench (host network at host.docker.internal:58000).
+#
+# Nothing in this stack talks to production. The frontend prod build uses
+# environment.production.ts which sets apiBaseUrl = "/api/v1" (relative),
+# so all API traffic stays inside this Docker network and is proxied to
+# the local backend bench by nginx.
+
+services:
+  builder:
+    image: node:20.18.1-alpine
+    container_name: ficct-fe-bench-builder
+    working_dir: /app
+    volumes:
+      - ..:/app
+      - bench_node_modules:/app/node_modules
+      - bench_dist:/app/dist
+    command: tail -f /dev/null
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ficct-fe-bench-nginx
+    depends_on:
+      - builder
+    ports:
+      - "54200:80"
+    volumes:
+      - bench_dist:/usr/share/nginx/html-src:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        # Serve whichever bundle dir is present in /usr/share/nginx/html-src.
+        # `ng build` outputs to dist/ficct-jobs-frontend/browser/.
+        mkdir -p /usr/share/nginx/html
+        if [ -d /usr/share/nginx/html-src/ficct-jobs-frontend/browser ]; then
+          cp -r /usr/share/nginx/html-src/ficct-jobs-frontend/browser/. /usr/share/nginx/html/
+        fi
+        exec nginx -g 'daemon off;'
+
+volumes:
+  bench_node_modules:
+  bench_dist:

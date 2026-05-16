@@ -1,0 +1,24 @@
+{
+  "label": "before",
+  "total_bytes": 632781,
+  "js_total_bytes": 566286,
+  "css_total_bytes": 42014,
+  "gzipped_compressible_bytes": 201420,
+  "initial_request_count": 11,
+  "initial_payload_bytes": 365267,
+  "initial_payload_gz_bytes": 107347,
+  "largest_chunk_bytes": 177051,
+  "largest_chunk_path": "./chunk-5SNPOVFZ.js",
+  "top_10": [
+    {"bytes": 177051, "path": "./chunk-5SNPOVFZ.js"},
+    {"bytes": 82768, "path": "./chunk-RBKWL7TF.js"},
+    {"bytes": 42014, "path": "./styles-IDAR3WTL.css"},
+    {"bytes": 37490, "path": "./chunk-KRLCWIFR.js"},
+    {"bytes": 34519, "path": "./polyfills-FFHMD2TL.js"},
+    {"bytes": 19247, "path": "./chunk-NJZKKY7N.js"},
+    {"bytes": 18572, "path": "./index.html"},
+    {"bytes": 17265, "path": "./chunk-RVT5ZOUU.js"},
+    {"bytes": 16943, "path": "./chunk-ZBREPUWF.js"},
+    {"bytes": 13922, "path": "./chunk-P32UTVVX.js"}
+  ]
+}
