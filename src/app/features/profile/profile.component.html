@@ -387,51 +387,11 @@
       <h2 class="heading-h2 text-sm">Habilidades</h2>
     </div>
     <div class="section-card-body space-y-5">
-      <form
-        class="grid gap-3 sm:grid-cols-5"
-        [formGroup]="skillForm"
-        (ngSubmit)="addSkill()"
-      >
-        <div class="sm:col-span-2">
-          <label class="label-base" for="skill-name">Habilidad</label>
-          <input
-            id="skill-name"
-            class="input-base"
-            formControlName="name"
-            placeholder="Python, React, SQL…"
-          />
-        </div>
-        <div>
-          <label class="label-base" for="skill-level">Nivel</label>
-          <select id="skill-level" class="input-base" formControlName="level">
-            <option [ngValue]="1">1 — Inicial</option>
-            <option [ngValue]="2">2 — Básico</option>
-            <option [ngValue]="3">3 — Intermedio</option>
-            <option [ngValue]="4">4 — Avanzado</option>
-            <option [ngValue]="5">5 — Experto</option>
-          </select>
-        </div>
-        <div>
-          <label class="label-base" for="skill-years">Años</label>
-          <input
-            id="skill-years"
-            type="number"
-            class="input-base"
-            formControlName="years_experience"
-          />
-        </div>
-        <div class="flex items-end">
-          <button
-            class="btn-primary btn-sm w-full"
-            type="submit"
-            [disabled]="skillForm.invalid"
-          >
-            Agregar
-          </button>
-        </div>
-      </form>
-
       @if (skills().length > 0) {
+        <p class="text-xs text-institution-text-secondary">
+          Estas habilidades se obtuvieron automáticamente de su CV ingresado.
+          Puede quitar cualquiera que no le represente.
+        </p>
         <ul class="flex flex-wrap gap-2">
           @for (s of skills(); track s.id) {
             <li
@@ -467,8 +427,52 @@
         </ul>
       } @else {
         <p class="text-sm text-institution-text-secondary">
-          Aún no ha declarado habilidades.
+          No se detectaron habilidades en su CV. Si la sección está ausente o no
+          se reconoció el formato, puede agregarlas manualmente a continuación.
         </p>
+        <form
+          class="grid gap-3 sm:grid-cols-5"
+          [formGroup]="skillForm"
+          (submit)="$event.preventDefault(); addSkill()"
+        >
+          <div class="sm:col-span-2">
+            <label class="label-base" for="skill-name">Habilidad</label>
+            <input
+              id="skill-name"
+              class="input-base"
+              formControlName="name"
+              placeholder="Python, React, SQL…"
+            />
+          </div>
+          <div>
+            <label class="label-base" for="skill-level">Nivel</label>
+            <select id="skill-level" class="input-base" formControlName="level">
+              <option [ngValue]="1">1 — Inicial</option>
+              <option [ngValue]="2">2 — Básico</option>
+              <option [ngValue]="3">3 — Intermedio</option>
+              <option [ngValue]="4">4 — Avanzado</option>
+              <option [ngValue]="5">5 — Experto</option>
+            </select>
+          </div>
+          <div>
+            <label class="label-base" for="skill-years">Años</label>
+            <input
+              id="skill-years"
+              type="number"
+              class="input-base"
+              formControlName="years_experience"
+            />
+          </div>
+          <div class="flex items-end">
+            <button
+              class="btn-primary btn-sm w-full"
+              type="submit"
+              [disabled]="skillForm.invalid"
+            >
+              Agregar
+            </button>
+          </div>
+        </form>
       }
     </div>
   </section>

@@ -145,7 +145,10 @@
   </div>
 
   <div class="chat-composer border-t border-institution-border bg-white p-3 sm:p-4 rounded-b-xl">
-    <form class="flex gap-2" (ngSubmit)="ask()">
+    <form
+      class="flex gap-2"
+      (submit)="$event.preventDefault(); ask()"
+    >
       <input
         class="input-base flex-1 min-h-[44px]"
         [formControl]="promptCtrl"
