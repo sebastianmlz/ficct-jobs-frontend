@@ -15,9 +15,14 @@
     >
       {{ rankingBusy() ? "Cargando…" : "Ejecutar análisis" }}
     </button>
-    <a class="btn-secondary btn-sm" [href]="csvUrl()" download>
-      Exportar CSV
-    </a>
+    <button
+      class="btn-secondary btn-sm"
+      type="button"
+      (click)="downloadCsv()"
+      [disabled]="csvBusy()"
+    >
+      {{ csvBusy() ? "Descargando…" : "Exportar CSV" }}
+    </button>
   </div>
 </app-page-header>
 

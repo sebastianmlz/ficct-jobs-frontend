@@ -4,9 +4,14 @@
   description="Métricas en tiempo real, estado del sistema y exportaciones del canal de empleabilidad."
 >
   <div class="mt-4 flex flex-wrap gap-2">
-    <a class="btn-secondary btn-sm" [href]="csvUrl()" download>
-      Exportar CSV
-    </a>
+    <button
+      class="btn-secondary btn-sm"
+      type="button"
+      (click)="downloadCsv()"
+      [disabled]="downloading() !== null"
+    >
+      {{ downloading() === "csv" ? "Descargando…" : "Exportar CSV" }}
+    </button>
     <button
       class="btn-secondary btn-sm"
       type="button"

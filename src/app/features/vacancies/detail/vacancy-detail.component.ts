@@ -19,6 +19,7 @@ import { vacancyStatusLabel } from "../../../core/models/labels";
 import { AuthService } from "../../../core/services/auth.service";
 import { IntelligenceService } from "../../../core/services/intelligence.service";
 import { JobsService } from "../../../core/services/jobs.service";
+import { ToastService } from "../../../core/services/toast.service";
 
 @Component({
   selector: "app-vacancy-detail",
@@ -32,6 +33,7 @@ export class VacancyDetailComponent implements OnInit {
   private readonly jobs = inject(JobsService);
   private readonly intelligence = inject(IntelligenceService);
   private readonly auth = inject(AuthService);
+  private readonly toast = inject(ToastService);
 
   private readonly vacancySignal = signal<Vacancy | null>(null);
   private readonly busySignal = signal(false);
@@ -39,6 +41,7 @@ export class VacancyDetailComponent implements OnInit {
   private readonly applyErrorSignal = signal<string | null>(null);
   private readonly gapSignal = signal<GapAnalysisResult | null>(null);
   private readonly gapBusySignal = signal(false);
+  private readonly gapErrorSignal = signal<string | null>(null);
 
   protected readonly vacancy = this.vacancySignal.asReadonly();
   protected readonly busy = this.busySignal.asReadonly();
@@ -46,6 +49,7 @@ export class VacancyDetailComponent implements OnInit {
   protected readonly applyError = this.applyErrorSignal.asReadonly();
   protected readonly gap = this.gapSignal.asReadonly();
   protected readonly gapBusy = this.gapBusySignal.asReadonly();
+  protected readonly gapError = this.gapErrorSignal.asReadonly();
   protected readonly isCandidate = computed(
     () => this.auth.role() === "candidate",
   );
@@ -91,12 +95,24 @@ export class VacancyDetailComponent implements OnInit {
     const v = this.vacancySignal();
     if (!v || this.gapBusySignal()) return;
     this.gapBusySignal.set(true);
+    this.gapErrorSignal.set(null);
     this.intelligence.gap(v.id).subscribe({
       next: (result) => {
         this.gapSignal.set(result);
         this.gapBusySignal.set(false);
       },
-      error: () => this.gapBusySignal.set(false),
+      error: (err) => {
+        // Previously the error path only cleared the spinner, so a 500 / RAG
+        // outage / missing-CV looked like a dead "Analizar" button. Surface a
+        // message inline and via toast instead.
+        this.gapBusySignal.set(false);
+        const envelope = err?.error as ApiErrorEnvelope | undefined;
+        const message =
+          envelope?.error?.message ??
+          "No se pudo generar el análisis de compatibilidad. Intente de nuevo.";
+        this.gapErrorSignal.set(message);
+        this.toast.danger("Análisis no disponible", message);
+      },
     });
   }
 }

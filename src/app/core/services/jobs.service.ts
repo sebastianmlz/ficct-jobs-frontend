@@ -121,8 +121,9 @@ export class JobsService {
     return this.api.delete(`/jobs/attachments/${attachmentId}/`);
   }
 
-  rankingCsvUrl(vacancyId: string): string {
-    return this.api.url(`/jobs/vacancies/${vacancyId}/ranking.csv`);
+  downloadRankingCsv(vacancyId: string): Observable<Blob> {
+    // Authenticated blob download so the JWT is sent (a bare <a href> 401s).
+    return this.api.getBlob(`/jobs/vacancies/${vacancyId}/ranking.csv`);
   }
 
   listClosedVacancies(): Observable<ClosedVacancy[]> {

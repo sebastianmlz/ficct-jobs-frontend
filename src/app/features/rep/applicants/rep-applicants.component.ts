@@ -44,12 +44,14 @@ export class RepApplicantsComponent implements OnInit {
   private readonly loadingSignal = signal(true);
   private readonly rankingSignal = signal<RankedCandidate[]>([]);
   private readonly rankingBusySignal = signal(false);
+  private readonly csvBusySignal = signal(false);
 
   protected readonly vacancy = this.vacancySignal.asReadonly();
   protected readonly applicants = this.applicantsSignal.asReadonly();
   protected readonly loading = this.loadingSignal.asReadonly();
   protected readonly ranking = this.rankingSignal.asReadonly();
   protected readonly rankingBusy = this.rankingBusySignal.asReadonly();
+  protected readonly csvBusy = this.csvBusySignal.asReadonly();
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get("id");
@@ -69,9 +71,32 @@ export class RepApplicantsComponent implements OnInit {
     });
   }
 
-  protected csvUrl(): string {
+  protected downloadCsv(): void {
     const id = this.route.snapshot.paramMap.get("id");
-    return id ? this.jobs.rankingCsvUrl(id) : "#";
+    if (!id || this.csvBusySignal()) {
+      return;
+    }
+    this.csvBusySignal.set(true);
+    this.jobs.downloadRankingCsv(id).subscribe({
+      next: (blob) => {
+        this.csvBusySignal.set(false);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ranking.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        this.csvBusySignal.set(false);
+        this.toast.danger(
+          "No se pudo descargar el ranking",
+          err?.error?.error?.message ?? "",
+        );
+      },
+    });
   }
 
   protected loadRanking(): void {

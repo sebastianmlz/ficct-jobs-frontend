@@ -290,6 +290,10 @@
               }
             </div>
           }
+
+          @if (gapError(); as ge) {
+            <div class="mt-4 alert-danger text-xs">{{ ge }}</div>
+          }
         </div>
       }
     </aside>

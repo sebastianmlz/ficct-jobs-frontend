@@ -66,17 +66,31 @@ async function ensureEnvironments() {
   }
 
   const template = await readFile(templatePath, 'utf-8');
-  const templateWithOverrides = applyEnvOverrides(template);
 
   for (const target of targets) {
     const targetPath = path.join(environmentsDir, target.filename);
-    if (await exists(targetPath)) {
-      continue;
-    }
+    const fileExists = await exists(targetPath);
 
-    const content = normalizeTemplate(templateWithOverrides, target.production);
-    await writeFile(targetPath, content, 'utf-8');
-    console.log(`Created ${path.relative(projectRoot, targetPath)}`);
+    // Start from the existing file (preserving committed values for local dev)
+    // or from the template when the file is missing.
+    const source = fileExists
+      ? await readFile(targetPath, 'utf-8')
+      : normalizeTemplate(template, target.production);
+
+    // Apply API_BASE_URL / CV_BUILDER_URL overrides when those env vars are
+    // set. This is what makes the Dockerfile build args actually take effect:
+    // previously existing files were skipped, so `ng build` baked the
+    // committed (dev) backend URL into the production bundle. Now the build
+    // arg rewrites the apiBaseUrl/cvBuilderUrl in place. With no env vars set,
+    // the committed values are preserved unchanged.
+    const withOverrides = applyEnvOverrides(source);
+
+    if (!fileExists || withOverrides !== source) {
+      await writeFile(targetPath, withOverrides, 'utf-8');
+      console.log(
+        `${fileExists ? 'Updated' : 'Created'} ${path.relative(projectRoot, targetPath)}`,
+      );
+    }
   }
 }
 

@@ -91,10 +91,12 @@ export class AdminService {
     );
   }
 
-  csvExportUrl(filters: EmployabilityFilters = {}): string {
-    return this.api.url(
-      "/admin/stats/employability.csv" + this.toQuery(filters),
-    );
+  downloadEmployabilityCsv(
+    filters: EmployabilityFilters = {},
+  ): Observable<Blob> {
+    // Authenticated CSV download (getBlob -> Authorization header via the auth
+    // interceptor). A bare <a href> would omit the JWT and 401.
+    return this.downloadBlob("/admin/stats/employability.csv", filters);
   }
 
   pdfExportUrl(filters: EmployabilityFilters = {}): string {

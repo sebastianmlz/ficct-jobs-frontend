@@ -40,7 +40,9 @@ export class AdminOverviewComponent implements OnInit {
     until: new FormControl<string>("", { nonNullable: true }),
     stage: new FormControl<string>("", { nonNullable: true }),
   });
-  private readonly downloadingSignal = signal<"pdf" | "xlsx" | null>(null);
+  private readonly downloadingSignal = signal<"pdf" | "xlsx" | "csv" | null>(
+    null,
+  );
   protected readonly downloading = this.downloadingSignal.asReadonly();
 
   protected readonly stageLabel = stageLabel;
@@ -124,8 +126,19 @@ export class AdminOverviewComponent implements OnInit {
     this.refreshStats();
   }
 
-  protected csvUrl(): string {
-    return this.admin.csvExportUrl(this.currentFilters());
+  protected downloadCsv(): void {
+    if (this.downloadingSignal()) return;
+    this.downloadingSignal.set("csv");
+    this.admin.downloadEmployabilityCsv(this.currentFilters()).subscribe({
+      next: (blob) => {
+        this.downloadingSignal.set(null);
+        this.triggerDownload(blob, "employability.csv");
+      },
+      error: () => {
+        this.downloadingSignal.set(null);
+        this.toast.danger("No se pudo descargar el CSV");
+      },
+    });
   }
 
   protected downloadPdf(): void {
