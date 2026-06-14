@@ -202,6 +202,13 @@ export interface ChatSource {
   /** How many raw chunks rolled up into this entity result. */
   chunk_count: number;
   entity: ChatEntity | null;
+  /** Stable card id (entity id when resolved, else document id). */
+  source_id?: string;
+  /** Entity title/name; "" when the source could not be resolved. */
+  title?: string;
+  /** Server-authoritative safe link target, or null when the source must
+   * not be linkable for the current caller (e.g. a CV without permission). */
+  route?: string | null;
 }
 
 export type ChatScope = "vacancies" | "company" | "global" | "unknown";

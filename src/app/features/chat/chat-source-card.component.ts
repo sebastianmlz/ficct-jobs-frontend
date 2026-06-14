@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+} from "@angular/core";
 import { RouterLink } from "@angular/router";
 
 import {
@@ -8,17 +16,40 @@ import {
   Role,
 } from "../../core/models";
 import { AuthService } from "../../core/services/auth.service";
-import { inject } from "@angular/core";
 
 @Component({
   selector: "app-chat-source-card",
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let s = source();
     @let vacancy = s.doc_type === "vacancy" ? asVacancy(s.entity) : null;
     @let candidate = s.doc_type === "candidate" ? asCandidate(s.entity) : null;
+
+    <!-- Reusable evidence snippet with expand/collapse + show more/less. -->
+    <ng-template #snippetBlock>
+      @if (s.snippet) {
+        <p
+          [id]="snippetId()"
+          class="mt-2 border-l-2 border-ficct-100 pl-2 text-xs italic text-institution-text-secondary"
+          [class.line-clamp-3]="!expanded()"
+        >
+          {{ s.snippet }}
+        </p>
+        @if (canToggle()) {
+          <button
+            type="button"
+            class="mt-1 inline-flex min-h-[44px] items-center gap-1 rounded text-[11px] font-medium text-ficct-700 hover:text-ficct-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ficct-400 sm:min-h-0"
+            [attr.aria-expanded]="expanded()"
+            [attr.aria-controls]="snippetId()"
+            (click)="toggle()"
+          >
+            {{ expanded() ? "Ver menos" : "Ver más" }}
+          </button>
+        }
+      }
+    </ng-template>
 
     @if (vacancy; as v) {
       <article
@@ -34,6 +65,14 @@ import { inject } from "@angular/core";
               }
               @if (v.status && v.status !== "ACTIVE") {
                 <span class="badge-warning">{{ v.status }}</span>
+              }
+              @if (relevance() !== null) {
+                <span
+                  class="text-[10px] text-institution-text-secondary"
+                  [title]="'Relevancia de la coincidencia'"
+                >
+                  {{ relevance() }}% relevancia
+                </span>
               }
               @if (s.chunk_count > 1) {
                 <span
@@ -55,17 +94,11 @@ import { inject } from "@angular/core";
                 <span class="text-slate-400">·</span> {{ v.location }}
               }
             </p>
-            @if (s.snippet) {
-              <p
-                class="mt-2 line-clamp-3 border-l-2 border-ficct-100 pl-2 text-xs italic text-institution-text-secondary"
-              >
-                {{ s.snippet }}
-              </p>
-            }
+            <ng-container [ngTemplateOutlet]="snippetBlock"></ng-container>
           </div>
           <a
             class="btn-secondary btn-sm shrink-0"
-            [routerLink]="['/vacancies', v.id]"
+            [routerLink]="vacancyLink()"
           >
             <span class="hidden sm:inline">Ver vacante</span>
             <svg
@@ -103,6 +136,14 @@ import { inject } from "@angular/core";
               @if (c.career) {
                 <span class="badge-neutral">{{ c.career }}</span>
               }
+              @if (relevance() !== null) {
+                <span
+                  class="text-[10px] text-institution-text-secondary"
+                  [title]="'Relevancia de la coincidencia'"
+                >
+                  {{ relevance() }}% relevancia
+                </span>
+              }
               @if (s.chunk_count > 1) {
                 <span
                   class="text-[10px] text-institution-text-secondary"
@@ -125,13 +166,7 @@ import { inject } from "@angular/core";
                 }
               </p>
             }
-            @if (s.snippet) {
-              <p
-                class="mt-2 line-clamp-3 border-l-2 border-ficct-100 pl-2 text-xs italic text-institution-text-secondary"
-              >
-                {{ s.snippet }}
-              </p>
-            }
+            <ng-container [ngTemplateOutlet]="snippetBlock"></ng-container>
             @if (candidateAction(); as action) {
               <div class="mt-3 flex flex-wrap items-center gap-2">
                 <a
@@ -168,10 +203,14 @@ import { inject } from "@angular/core";
       <div
         class="rounded-md border border-institution-border bg-white px-3 py-2 text-xs text-institution-text-secondary"
       >
-        <span class="badge-neutral mr-2">Fuente</span>
-        @if (s.snippet) {
-          <span class="line-clamp-2 align-middle italic">{{ s.snippet }}</span>
-        } @else {
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="badge-neutral">Fuente</span>
+          @if (relevance() !== null) {
+            <span class="text-[10px]">{{ relevance() }}% relevancia</span>
+          }
+        </div>
+        <ng-container [ngTemplateOutlet]="snippetBlock"></ng-container>
+        @if (!s.snippet) {
           <span class="align-middle">Sin extracto disponible.</span>
         }
       </div>
@@ -182,15 +221,50 @@ export class ChatSourceCardComponent {
   private readonly auth = inject(AuthService);
   readonly source = input.required<ChatSource>();
 
+  /** Local, card-scoped expand state. Kept inside the component (never lifted
+   * into the conversation state) so expanding a source never resets the chat
+   * and survives re-renders when a new message is appended. */
+  private readonly expandedSignal = signal(false);
+  protected readonly expanded = this.expandedSignal.asReadonly();
+
+  protected toggle(): void {
+    this.expandedSignal.update((v) => !v);
+  }
+
+  /** Stable, unique id for the snippet element so aria-controls resolves. */
+  protected readonly snippetId = computed(() => {
+    const s = this.source();
+    return `chat-src-${s.source_id || s.document_id || "x"}`;
+  });
+
+  /** Only offer a toggle when the snippet is long enough to be clamped. */
+  protected readonly canToggle = computed(() => (this.source().snippet?.length ?? 0) > 140);
+
+  /** Relevance as a 0..100 percentage, or null when no usable score. */
+  protected readonly relevance = computed(() => {
+    const score = this.source().score;
+    if (!score || score <= 0) {
+      return null;
+    }
+    return Math.round(Math.min(1, score) * 100);
+  });
+
+  /** Vacancy link: prefer the server-authoritative route, else build it. */
+  protected readonly vacancyLink = computed(() => {
+    const s = this.source();
+    if (s.route) {
+      return s.route;
+    }
+    const v = this.asVacancy(s.entity);
+    return v ? ["/vacancies", v.id] : ["/vacancies"];
+  });
+
   /** Resolved primary action for a candidate card.
    *
-   * For a company representative we navigate to the candidate's most
-   * recent application detail in their own company — that's the page
-   * where they can read the CV, schedule interviews, change stage, etc.
-   * For other roles (candidate, admin) there is no candidate-detail
-   * destination in the current product, so the card stays informational
-   * and we deliberately render no CTA rather than send the user to a
-   * page where they cannot act. */
+   * For a company representative we navigate to the candidate's most recent
+   * application detail in their own company. For other roles there is no
+   * candidate-detail destination, so the card stays informational and renders
+   * no CTA rather than leaking CV content or sending the user nowhere. */
   protected readonly candidateAction = computed(() => {
     const s = this.source();
     if (s.doc_type !== "candidate") {
