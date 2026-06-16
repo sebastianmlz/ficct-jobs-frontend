@@ -204,11 +204,18 @@ import { AuthService } from "../../core/services/auth.service";
         class="rounded-md border border-institution-border bg-white px-3 py-2 text-xs text-institution-text-secondary"
       >
         <div class="flex flex-wrap items-center gap-1.5">
-          <span class="badge-neutral">Fuente</span>
+          <span class="badge-neutral">{{ sourceTypeLabel() }}</span>
           @if (relevance() !== null) {
             <span class="text-[10px]">{{ relevance() }}% relevancia</span>
           }
         </div>
+        @if (s.title) {
+          <p
+            class="mt-1 font-display text-sm font-semibold leading-snug text-institution-text-primary"
+          >
+            {{ s.title }}
+          </p>
+        }
         <ng-container [ngTemplateOutlet]="snippetBlock"></ng-container>
         @if (!s.snippet) {
           <span class="align-middle">Sin extracto disponible.</span>
@@ -239,6 +246,12 @@ export class ChatSourceCardComponent {
 
   /** Only offer a toggle when the snippet is long enough to be clamped. */
   protected readonly canToggle = computed(() => (this.source().snippet?.length ?? 0) > 140);
+
+  /** Spanish label for the source type, used by the generic fallback card. */
+  protected sourceTypeLabel(): string {
+    const t = this.source().doc_type;
+    return t === "vacancy" ? "Vacante" : t === "candidate" ? "Candidato" : "Fuente";
+  }
 
   /** Relevance as a 0..100 percentage, or null when no usable score. */
   protected readonly relevance = computed(() => {
