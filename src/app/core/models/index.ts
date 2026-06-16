@@ -51,6 +51,7 @@ export type DocumentIngestStatus =
   | "ingesting"
   | "ingested"
   | "failed"
+  | "needs_ocr"
   | "deleted";
 
 export interface DocumentItem {

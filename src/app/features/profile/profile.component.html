@@ -214,11 +214,34 @@
                     "
                   ></span>
                   <span class="text-xs text-institution-text-secondary">{{
-                    d.ingest_status
+                    ingestLabel(d.ingest_status)
                   }}</span>
                 </div>
-                @if (d.ingest_status === "failed" && d.ingest_error) {
-                  <p class="mt-1 text-xs text-red-600">{{ d.ingest_error }}</p>
+                @if (d.ingest_status === "needs_ocr") {
+                  <div
+                    class="mt-1 rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800"
+                    role="status"
+                  >
+                    <p>
+                      Este PDF parece escaneado (solo imagen), por lo que no
+                      pudimos leer su texto. Suba un PDF con texto seleccionable o
+                      genere uno con el CV Builder.
+                    </p>
+                    <a
+                      class="mt-1 inline-flex min-h-[40px] items-center font-medium text-ficct-700 hover:text-ficct-800"
+                      [href]="cvBuilderHref()"
+                      target="_blank"
+                      rel="noopener"
+                      (click)="trackCvOpen()"
+                      >Abrir CV Builder</a
+                    >
+                  </div>
+                }
+                @if (d.ingest_status === "failed") {
+                  <p class="mt-1 text-xs text-red-600">
+                    No pudimos procesar el documento. Intente con otro archivo
+                    PDF o DOCX con texto seleccionable.
+                  </p>
                 }
               </div>
               @if (d.file_url) {
