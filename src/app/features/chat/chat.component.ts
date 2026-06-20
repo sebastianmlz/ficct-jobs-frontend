@@ -45,8 +45,11 @@ export class ChatComponent {
   });
   private readonly turnsSignal = signal<ChatTurn[]>([]);
   private readonly busySignal = signal(false);
+  private readonly confirmingNewChatSignal = signal(false);
   protected readonly turns = this.turnsSignal.asReadonly();
   protected readonly busy = this.busySignal.asReadonly();
+  protected readonly confirmingNewChat = this.confirmingNewChatSignal.asReadonly();
+  protected readonly hasTurns = computed(() => this.turnsSignal().length > 0);
 
   protected readonly scopeLabel = computed(() => {
     const r: Role | null = this.auth.role();
@@ -85,6 +88,31 @@ export class ChatComponent {
   protected usePrompt(text: string): void {
     this.promptCtrl.setValue(text);
     this.ask();
+  }
+
+  /** Ask to start a new chat (only when there is context to lose). */
+  protected requestNewChat(): void {
+    if (!this.hasTurns() || this.busySignal()) return;
+    this.confirmingNewChatSignal.set(true);
+  }
+
+  protected cancelNewChat(): void {
+    this.confirmingNewChatSignal.set(false);
+  }
+
+  /**
+   * Clears ONLY the in-memory conversation context. Does not touch the
+   * candidate profile, CV, applications, vacancies or any persisted data —
+   * chat history is client-side only and not stored server-side.
+   */
+  protected confirmNewChat(): void {
+    this.turnsSignal.set([]);
+    this.promptCtrl.setValue("");
+    this.confirmingNewChatSignal.set(false);
+    this.toast.info(
+      "Nueva conversación",
+      "Se borró el contexto de la conversación actual.",
+    );
   }
 
   protected ask(): void {
