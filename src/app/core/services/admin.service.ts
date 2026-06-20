@@ -99,18 +99,6 @@ export class AdminService {
     return this.downloadBlob("/admin/stats/employability.csv", filters);
   }
 
-  pdfExportUrl(filters: EmployabilityFilters = {}): string {
-    return this.api.url(
-      "/admin/stats/employability.pdf" + this.toQuery(filters),
-    );
-  }
-
-  xlsxExportUrl(filters: EmployabilityFilters = {}): string {
-    return this.api.url(
-      "/admin/stats/employability.xlsx" + this.toQuery(filters),
-    );
-  }
-
   downloadEmployabilityPdf(
     filters: EmployabilityFilters = {},
   ): Observable<Blob> {

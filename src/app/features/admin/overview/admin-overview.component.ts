@@ -217,6 +217,7 @@ export class AdminOverviewComponent implements OnInit {
         this.skillsSignal.set({
           available: false,
           message:
+            err?.error?.error?.message ??
             err?.error?.message ??
             "El motor de inteligencia no está disponible temporalmente.",
         });
